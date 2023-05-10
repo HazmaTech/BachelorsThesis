@@ -7,7 +7,11 @@ Mivel a SourceMeter eszközkészlet több nagyobb szoftvercsomagból áll, melye
 
 Az új nyelv támogatásához a typescript-eslint által felvázolt AST alapján hoztunk létre egy új, szervezett formájú sémát. Bár a projektben szerepelt JavaScripthez tartozó séma, a kettő nyelv kompatibilitása ellenére számos eltérés volt jelen az eredeti, ESTree specifikáció alapján készített és az új, TypeScriptet támogató séma között. Emellett naprakész dokumentáció nem állt rendelkezésre sem a meglévő sémához, sem teljesen új készítéséhez.
 
-[esetleg példa volt sémából] 
+\begin{figure}[!htbp]
+    \caption{Korábban használt JavaScript Sémából egy részlet}\label{fig:apocalypse}
+    \centering
+    \includegraphics[width=0.9\textwidth]{oldschema.png}
+\end{figure}
 
 Annak érdekében hogy teljeskörű, lehetőleg hibamentes támogatást tudjunk létrehozni az új nyelvnek, egy teljesen új sémát hoztunk létre az új nyelv által használt AST alapján, miközben folyamatosan ellenőriztük a JavaScript kompatibilitást. 
 
