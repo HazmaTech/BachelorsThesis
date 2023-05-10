@@ -44,12 +44,15 @@ Webpack konfigurációban a modul importálások rezolválására használt 'ál
 
 A végső megoldása ennek a hibának bár egyszerű, később változtatást igényel, amint a fordító program bővítmény kezelésén frissítenek. A program kötegelése során a generált fájl mellé amodulokat tartalmazó mappát is átmásolásra kerül. Ennek köszönhetően futásidő folyamán a keresett modult megtalálja és hibamentesen tudja feladatát végezni. Ennek legfőbb hátránya, hogy a program által foglalt hely többszörösére nőtt. A kötegelési módszer változtatása eddigi tesztelések alapján futásidőn nem rontott.
 
-Végül a TypeScript támogatás megvalósításához szükséges volt az új fordító által használt szabálysértések bevezetése a programba. Ehhez kettő különálló fájlt kellett megvalósítanom. A korábban említett .json kiterjesztésű szabály fájl és a .rul.md fájl között legfőbbképp formai eltérések vannak és különböző módon kell őket elkészíteni.
+Végül a TypeScript támogatás megvalósításához szükséges volt az új fordító által használt szabálysértések bevezetése a programba. Ehhez kettő különálló fájlt kellett megvalósítanom. A korábban említett .json kiterjesztésű szabály fájl és a '.rul.md' fájl között legfőbbképp formai eltérések vannak és különböző módon kell őket elkészíteni.
 
-Az alapértelmezett szabály fájl (.json fájl) egy JavaScript objektumot tartalmazó fájl, melyben fel van sorolva a fordítóhoz tartozó összes szabály egy, vagy több hozzárendelt értékkel. A szabályokhoz minden esetben tartozik szám, mely meghatározza, hogy elemzés közben adott szabálysértést detektálni akarjuk-e. Ez az szám 0 vagy 1 értéket vehet fel, 0 esetén átlépji, 1 esetén pedig detektálja a program. A második érték, mely nem minden szabálynál található meg, bővebb információt tartalmaz arról hogy pontosan milyen fajtáját detektálja a program. 
+Az alapértelmezett szabály fájl (.json fájl) egy JavaScript objektumot tartalmazó fájl, melyben fel van sorolva a fordítóhoz tartozó összes szabály egy, vagy több hozzárendelt értékkel. A szabályokhoz minden esetben tartozik szám, mely meghatározza, hogy elemzés közben adott szabálysértést detektálni akarjuk-e, és milyen súlyosságot kívánunk hozzá rendelni az elemzés eredményében. Ez az szám 0, 1 vagy 2 értéket vehet fel, 0 esetén átlépji, 1 esetén figyelmeztetésként (warningként), 2 esetén pedig hibaként észleli a program. A második érték, mely nem minden szabálynál található meg, bővebb információt tartalmaz arról hogy pontosan milyen fajtáját detektálja a program. 
 
-A másik szabály fájl (.rul.md) ugyan ezeket a szabályokat tartalmazza egy átláthatóbb formátumban. 
-
+A másik szabály fájl (.rul.md) ugyan ezeket a szabályokat tartalmazza egy átláthatóbb formátumban. Ebben a fájlban a szabálysértésekhez a súlyosságukon kívül kulcsszavak és leírás is tartozik, melyek alapján a szoftvercsomag felhasználói személyre szabhatják az elemzést.
+Ennek a szabályfájlnak módosításához korábbi eszközkészlet verziókban egy több lépésből álló folyamat volt. Eredetileg '.rul' típusú állományokat használtak fel a szabálysértéseket vizsgáló programok. Ezeknek a módosítása során először a módosítandó szabályfájlt '.md' állománnyá kellett konvertálni és a kellő módosításokat Markdown formátumban megírni a fájlban jelen lévő formai követelmények alapján. Ezután a módosított '.md' fájlt html állománnyá (HyperTextMarkupLanguage), majd vissza '.rul' állománnyá kellett visszaaállítani külső segédprogramok használatával.
+Ez a folyamat a jelenlegi eszközkészlet verzión belül jelentősen rövidebb lett. Az új szabályokat a '.rul.md' állományban formai követelményeknek megfelelően, hosszas konvertálások nélkül lehet implementálni. A szabályokat h2-es fejlécekkel tagolva adjuk meg. Ezen fejléceknél adjuk meg a belső azonosítóját az adott szabálynak, majd alatta h4-es fejlécekkel felsorolva adjuk meg a szabály információit. Az "OriginalId" mező tartalmazza az elemző által felismert szabály nevét, az "Enabled" és a "Warning" mezők határozzák meg hogy észleljük-e az adott szabálysértéseket, hibaként vagy figyelmeztetésként. A "HelpText" mező rövid leírást tartalmaz a szabálysértésről. A "Tags" mező alatt címkéket lehet meghatározni, melyek alapján a szabálysértések kategorizálhatóak. Mivel nyelvre és eszközre szabottak a '.rul.md' fájlok, így csak a "/general/" címkénél szükséges szabályhoz illő értéket megadni, a "/language/" és a "/tool/" címkék megegyeznek. Végül "Settings" mező alatt néhány szabálysértésnek, mint ahogy korábban az alapértelmezett fájlban meg kellett adni, további információkat is szükséges megadni.
+---image?---
+A szabálysértések manuálisan lettek beillesztve, melyek megfelelnek az ESLintRunnerben használt új parser dokumentációjában szereplő információknak. Az, hogy mely szabálysértések vannak engedélyezve elemzés során és szükség esetén ezeknek további részletei megbeszélés alapján voltak meghatározva.
 
 \subsection{Elért eredmények ESLintRunnerben}
 
@@ -106,3 +109,9 @@ Ezzel a bővítéssel jelentősen elő lettek segítve a JSAN jövőbeli fejlesz
 
 \section{JSCG bővítése}
 
+\subsection{JSCG bevezetés, hiba felvázolása}
+A JSCG, mint korábban említve volt, JSAN által van használva hívásgráf előállítására, melyet a szoftvercsomag későbbi eszközei használnak fel különböző dolgok számolására és detektálására.
+
+A program már rendelkezett kezdetleges TypeScript támogatással, viszont jelentős mennyiségű node lekezelésére nem volt meghatározva működés. Ezen kívül specifikus TypeScript nyelvtani tényezők észlelése esetén hibába futott a program, mivel érvénytelen adatot olvasott be.
+
+\subsection{Bővítés, hibajavítás lépései}

@@ -29,10 +29,3 @@ Ezek ellenőrzéséhez létrehoztam külön tömböket, melyek tartalmazzák a n
 A teszteket, amiket megadhatunk paraméterként, hozzáadtam a megfelelő argumentumhoz. Mivel nem akartam hogy egy hosszú sor, vagy egy nagy, nehezen olvasható szövegblokk legyen, nyelvenként csoportosítva, tagolva adtam meg ezeket.
 
 Ezek után a módosítások után még fennállt egy probléma. Minden teszt futtatása esetén (Regtest\_all futtatása) minden teszt kétszer futott le. A teszteknek a tömbjei egy 'all\_tests' nevű szótárban (dictionaryben) vannak megadva. Tesztek futtatása során ellenőrizzük hogy adott nyelvhez tartozik-e az éppen iterált teszt, ha nem, akkor kihagyjuk annak futtatását. Mivel a tesztek külön-külön meg voltak adva a programokra és nyelvekre, így alapesetben minden teszt kétszer futott volna le. Ennek megoldására legegyszerűbb módszer a duplikált tesztek törlése volt abban az esetben, ha 'Regtest\_all' futtatása volt a feladat, azaz minden, nyelvhez tartozó összetett tesztet töröltünk az 'all\_tests'-ből. 
-
-\section{Tesztfolyamatok felgyorsítása grafikus interfésszel}
-
-Az előbb említett tesztelési célpontok bővítése és korábbi tesztelések és fejlesztések folyamán sok olyan folyamat volt, melyeket gyakran kellett megismételni. Tesztelések folyamán adott hibák keresése vagy javítása esetén például többször kellett a szükséges tesztelési célpontot lefordítani. Ez adott funkciók fejlesztése esetén többször járt terminálba több parancs írásával is.
-Ezeknek a lépéseknek folyamatos elvégzése időigényes, emellett az adott szituációkban hajlamos lehet a fejlesztő a használt parancsok félreírására és egyéb hibák elvétésére, mely tovább lassítja a munkafolyamatot. Ennek a problémának enyhítésére egy olyan programot készítettem egy programot, mellyel több lépéses folyamatokat egy futtatható konfigurációba lehet sűríteni.
-
-A cliGlasses egy Python nyelven írt grafikus interfész, melyben futtatási konfigurációkat hozhatunk létre, hozzájuk tartozó részleteket könnyen módosíthatjuk és futtathatjuk. 
