@@ -1,0 +1,12 @@
+\chapter{Bevezetés}
+\label{chap:intro}
+
+\noindent 
+A szakdolgozatom célja egy forráskód elemző eszközkészlet, névlegesen a SourceMeter  bővítése volt, melynek az Analyzer-Javascript alrészébe TypeScript nyelv elemzésének implementálása volt a fő célja.
+Mivel ez a szoftvercsomag sok, kisebb programból áll össze, melyek egymásra épülnek, az új nyelv teljeskörű támagotásához több alprogramban kellett változtatásokat hozni. Emellett szükséges volt arra is figyelni hogy a meglévő JavaScript támogatás is megmaradjon.
+
+A SourceMeter eszközkészleten belül több szoftvercsomag található, melyek segítségével különböző nyelvek statikus elemzését lehet végezni. Ezek közül a csomagok közül a SourceMeter-JavaScript csomagnak adott programjain végeztem módosításokat, többek között a JavaScript elemzőn (JavaScript Analyzer, továbbiakban JSAN) és az ESLintRunner nevű programon. 
+
+Ezen bővítések mellett egyéb, működést, karbantarthatóságot és használhatóságot befolyásoló változtatást valósítottam meg, melyeknek köszönhetően az említett programok karbantarthatósága javult, csökkent az eszközkészlet teszteléséhez szükséges idő.
+
+Az eszközkészlet bővítése egyszerre több ember által volt végezve. Mivel a módosított szoftvercsomag alprogramjai egymásra épülnek, fontos volt a csapatmunka és folyamatos, effektív kommunikálás hogy a fejlesztés sikeresen és hatékonyan haladhasson. Néhány helyen a munkafolyamatok során átfedések, és feloszthatatlan feladatokat volt szükséges elvégezni. 

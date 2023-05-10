@@ -1,0 +1,17 @@
+\chapter{Előre tervezett változtatások}
+\label{chap:fejezet3}
+
+A TypeScript nyelv támogatásának megvalósításához a szoftvercsomag programjai közötti függőségek miatt több programban szükséges volt változtatásokat létrehozni.
+Működésbeli szempontok miatt külön séma létrehozása szükséges volt az új nyelvhez, mely tartalmazza visszamenőleg a JavaScript nyelv elemzéséhez szükséges elemeket.
+Az én feladatom része az ESLintRunner nevű programban az új nyelv támogatásának teljeskörű implementálása, JSAN és JSCG nevű programokban pedig meglévő támogatás bővítése.
+
+Az ESLintRunner programon belül korábban csak JavaScript támogatás volt implementálva. Ennek bővítéséhez szükséges volt új "parser", avagy fordító bevezetése és a hozzá tartozó új szabályok implementálása volt szükséges.
+
+JSAN-on belül a nyelv elemzéséhez használt, különálló feladatok automatikus legenerálását valósítottam meg, melynek segítségével könnyebben karbantarthatóbbá vált az eszköz.
+
+JavaScriptCallGraph, avagy JSCG-n belül korábban nem támogatott nyelvi elemek elemzéséhez szükséges funkciókat implementáltam, mely a JSAN elemzési képességén javított.
+Ezek mellett egyéb, teszteléssel kapcsolatos változtatásokat volt szükséges implementálni.
+
+Az eddigi feladatok mellett az ESLintRunner új funkcionalitásának tesztelésére új regressziós tesztek írása is szükséges volt.
+
+A feladat elvégzéséhez Windows redszeren volt a fejlesztési folyamat végezve Visual Studio Code használatával. A programokban elvégzett változtatások helyes működésének tesztelése Windows és Linux rendszereken volt végezve helyi és központi szervergépen. A fordítási folyamatok Windowson Visual Studio 2017 Build Tools használatával voltak végezve, míg Linuxon Unix Makefiles használatával.
