@@ -5,13 +5,13 @@
 
 Mivel a SourceMeter eszközkészlet több nagyobb szoftvercsomagból áll, melyeknek csomagon belül, és néhány specifikus esetben csomagon kívül is adódnak függőségek a használt szoftverek között, néhány munkafolyamat oszthatatlannak minősült. Ezek a bővítési folyamatnak kezdeténél voltak jelentősek, mivel a SourceMeter által használt sémák nélkül nem lehet az elemzési folyamatot helyesen lefuttatni. A korábbi fejezetben említett sémák tartalmazzák az elemzéshez szükséges ASG felépítését, ennek módosítása létfontosságú volt a munkafolyamat folytatásához.
 
-Az új nyelv támogatásához a typescript-eslint által felvázolt AST alapján hoztunk létre egy új, szervezett formájú sémát. Bár a projektben szerepelt JavaScripthez tartozó séma, a kettő nyelv kompatibilitása ellenére számos eltérés volt jelen az eredeti, ESTree specifikáció alapján készített és az új, TypeScriptet támogató séma között. Emellett naprakész dokumentáció nem állt rendelkezésre sem a meglévő sémához, sem teljesen új készítéséhez.
-
 \begin{figure}[!htbp]
     \caption{Korábban használt JavaScript Sémából egy részlet}\label{fig:apocalypse}
     \centering
     \includegraphics[width=0.9\textwidth]{oldschema.png}
 \end{figure}
+
+Az új nyelv támogatásához a typescript-eslint által felvázolt AST \cite{typescript-eslint-ast} alapján hoztunk létre egy új, szervezett formájú sémát. Bár a projektben szerepelt JavaScripthez tartozó séma, a kettő nyelv kompatibilitása ellenére számos eltérés volt jelen az eredeti, ESTree specifikáció \cite{estree-spec} alapján készített és az új, TypeScriptet támogató séma között. Emellett naprakész dokumentáció nem állt rendelkezésre sem a meglévő sémához, sem teljesen új készítéséhez.
 
 Annak érdekében hogy teljeskörű, lehetőleg hibamentes támogatást tudjunk létrehozni az új nyelvnek, egy teljesen új sémát hoztunk létre az új nyelv által használt AST alapján, miközben folyamatosan ellenőriztük a JavaScript kompatibilitást. 
 
@@ -36,7 +36,7 @@ Ez a program egy úgynevezett 'parser', avagy fordító segítségével tudja ez
 
 \subsection{Megtett lépések az új nyelv támogatásához}
 
-Ahhoz, hogy TypeScript nyelv elemzésének a támogatását megvalósíthassam, ezen beállításokban megadtam a fordító opciónak ('parser' mező) az újonnan importált 'typescript-eslint' csomagnak a  fordító modulját, majd a bővítmények közé ('plugin' mező) a csomag 'eslint-plugin' modulját. 
+Ahhoz, hogy TypeScript nyelv elemzésének a támogatását megvalósíthassam, ezen beállításokban megadtam a fordító opciónak ('parser' mező) az újonnan importált 'typescript-eslint' \cite{typescript-eslint} csomagnak a fordító modulját, majd a bővítmények közé ('plugin' mező) a csomag 'eslint-plugin' modulját. 
 A bővítmény megadása engedélyezi a programnak, hogy TypeScript nyelvhez kötődő, speciális szabálysértéseket detektálhasson és korábbi, JavaScriptes szabálysértéseket bővítsen ki új, opcionális információkkal. 
 
 Emellett helyes működés eléréséhez szükséges volt megadni az elemezhető fájlok kiterjesztését, melyet a felülbírálásoknál ('overrides' objektum) külön a 'files' és a beágyazott 'parser' mezőkben definiáltam. A mezők egyszerre tartalmazzák a JavaScript (.js és .jsx) és a TypeScript (.ts és .tsx) nyelvekhez tartozó kiterjesztéseket kompatibilitás megőrzése érdekében. Hiányában az alapértelmezett értékek töltődnek be futásidő során a fordítóhoz, mely nem kívánt működésben és eredményekben járulna. Az új fordító esetében azt jelentené, hogy csak TypeScript fájlok elemzése menne végbe.
@@ -102,7 +102,7 @@ Ezzel a módszerrel a fordító alkalmas egyszerre TypeScript és JavaScript nye
 
 Az ESLintRunner futtatásához szükséges használat előtt a programot és a hozzá tartozó modulokat egy önálló fájlba 'összetömöríteni' a webpack nevű szoftvercsomaggal. A program működése TypeScript nyelv támogatás implementálása előtt nem függött külső bővítményektől. Összetömörítés után futás közben az alapértelmezett, 'esprima' nevű fordítóval elemzett, mely az eddig használt modulokba beépítve volt. Az újonnan használt bővítmények használata miatt a program fordítója kényszerítve van külső útvonalak vizsgálatára. A program önmagára nem tud hivatkozni, mivel ezzel az alapértelmezett fordítót használná eddigi implementáció miatt, a modulokat tartalmazó mappát (node\_modules nevű mappa) tömörítés során pedig nem másoljuk át a kimeneti útvonalra. Erre a probléma megoldására többek között a webpack beállításainak módosításával és alternatív kötegelő programok alkalmazásával próbálkoztam. A webpack alternatívák, melyek közé tartozik a Parcel, a Browserify és a Rollup.js, eggyike sem volt alkalmas megoldás, mivel mindegyik hasonló, már webpack használata közben észlelt hibákat állított elő. Észrevehető, egyéb különbségként a használatuk változó nehézsége és gyengébb teljesítményüknek köszönhetően a webpack beállítások módosítása maradt.
 
-Webpack konfigurációban a modul importálások rezolválására használt 'álnevek' (alias) beállítása szolgálhatott volna megoldásul. Ezzel meg lehet adott moduloknak határozni, hogy milyen néven lehessen a programon belül importálni. Ismételt módon a fordító egyedi működésének köszönhetően ez nem használható megoldás, mert a felhasznált pluginokat csak név szerint adjuk meg konfigurációval, nem pedig import utasításokkal.
+Webpack konfigurációban a modul importálások rezolválására használt 'álnevek' (alias) beállítása szolgálhatott volna megoldásul \cite{webpack-resolve}. Ezzel meg lehet adott moduloknak határozni, hogy milyen néven lehessen a programon belül importálni. Ismételt módon a fordító egyedi működésének köszönhetően ez nem használható megoldás, mert a felhasznált pluginokat csak név szerint adjuk meg konfigurációval, nem pedig import utasításokkal.
 
 A végső megoldása ennek a hibának bár egyszerű, később változtatást igényel, amint a fordító program bővítmény kezelésén frissítenek. A program kötegelése során a generált fájl mellé a modulokat tartalmazó mappát is átmásolásra kerül. Ezt a szoftvercsomag fordítása során van elvégezve CMake parancs segítségével. Ennek köszönhetően futásidő folyamán a keresett modult megtalálja és hibamentesen tudja feladatát végezni. Ennek legfőbb hátránya, hogy a program által foglalt hely többszörösére nőtt. A kötegelési módszer változtatása eddigi tesztelések alapján futásidőn nem rontott.
 
@@ -278,8 +278,11 @@ Ezzel a bővítéssel jelentősen elő lettek segítve a JSAN jövőbeli fejlesz
 \section{JSCG bővítése}
 
 \subsection{JSCG bevezetés, hiba felvázolása}
-A JSCG, mint korábban említve volt, JSAN által van használva hívásgráf előállítására, melyet a szoftvercsomag későbbi eszközei használnak fel különböző dolgok számolására és detektálására.
+A JSCG, mint korábban említve volt, JSAN által van használva hívásgráf előállítására, melyet a szoftvercsomag későbbi eszközei használnak fel például különböző metrikák számolására. A program futtatása JSAN-on belül történik meg, közvetlen miután az elemzett projekthez tartozó kódbázisnak a fájljai alapján elkészült az AST. Ezeket paraméterként átadja a JSAN a JSCG-nek és meghatározza, hogy milyen stratégiával készítse el a hívásgráfot. Jelenleg 'NONE', 'ONESHOT' és 'DEMAND' stratégiák használata áll rendelkezésre, melyek közül a 'ONESHOT' van felhasználva. A stratégiák közötti különbség az intreprocedúrális (eszközeljárási) áramlat követésében különböznek. Nevének megfelelően a 'NONE' stratégia ezt nem követi, míg a ONESHOT csak az azonnal meghívott egyszeri lezárások esetében teszi meg.
+JavaScript esetében szükséges volt a hívásgráfok legenerálása a nyelv dinamukissága miatt\cite{feldthaus2013efficient}. Ez TypeScript projekteknél is szükséges, mivel JavaScript nyelv bővítésére szolgál.
 
-A program már rendelkezett kezdetleges TypeScript támogatással, viszont jelentős mennyiségű node lekezelésére nem volt meghatározva működés. Ezen kívül specifikus TypeScript nyelvtani tényezők észlelése esetén hibába futott a program, mivel érvénytelen adatot olvasott be.
+A program már rendelkezett kezdetleges TypeScript támogatással, viszont jelentős mennyiségű node lekezelésére nem volt meghatározva működés. Ezen kívül specifikus TypeScript nyelvtani tényezők észlelése esetén hibába futott a program, mivel eddigi implementáció alapján érvénytelen adatot olvasott be. Ezek a változtatások, JSAN-hoz hasonló módon az új typescript-eslint elemző által használt AST specifikáció alapján lett megvalósítva.
 
 \subsection{Bővítés, hibajavítás lépései}
+
+
