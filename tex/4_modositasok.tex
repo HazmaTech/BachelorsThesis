@@ -18,7 +18,7 @@ Annak érdekében hogy teljeskörű, lehetőleg hibamentes támogatást tudjunk 
 \section{ESLintRunner bővítése TypeScript támogatáshoz}
 
 \subsection{ESLintRunner bevezető}
-Az Analyzer-Javascript a forráskód elemzés egyik első lépéseként az ESLintRunner nevű programot futtatja le az elemzendő projekten. Ez a program kimutatja, hogy milyen, előre meghatározott kódolási szabálysértéseket ejtettek a fejlesztés során, és listázza ezen hibák pontos helyét hogy mely fájlokban fordulnak elő, sor és karakter pontosságra. Ezeket egy .xml formátumú fájlba helyezi a program futás után, melyre \aref{lst:eslintoutput}-es ábrában szerepel példa.
+A SourceMeter for Javascript szoftvercsaládban a forráskód elemzés egyik első lépéseként az ESLintRunner nevű programot futtatja le az elemzendő projekten. Ez a program kimutatja, hogy milyen, előre meghatározott kódolási szabálysértéseket ejtettek a fejlesztés során, és listázza ezen hibák pontos helyét hogy mely fájlokban fordulnak elő, sor és karakter pontosságra. Ezeket egy .xml formátumú fájlba helyezi a program futás után, melyre \aref{lst:eslintoutput}-es ábrában szerepel példa.
 
 \begin{lstlisting}[caption={ESLintRunner kimeneti fájl példa},label={lst:eslintoutput}, language={xml}]
 <?xml version='1.0' encoding='utf-8'?>
@@ -116,9 +116,9 @@ A végső megoldása ennek a hibának bár egyszerű, később változtatást ig
     )
 \end{lstlisting}
 
-Végül a TypeScript támogatás megvalósításához szükséges volt az új fordító által használt szabálysértések bevezetése a programba. Ehhez kettő különálló fájlt kellett megvalósítanom. A korábban említett .json kiterjesztésű szabály fájl és a '.rul.md' fájl között legfőbbképp formai eltérések vannak és különböző módon kell őket elkészíteni.
+Végül a TypeScript támogatás megvalósításához szükséges volt az új fordító által használt szabálysértések bevezetése a programba. Ehhez kettő különálló fájlt kellett megvalósítanom. A korábban említett .json kiterjesztésű szabály fájl és a \texttt{.rul.md} fájl között legfőbbképp formai eltérések vannak és különböző módon kell őket elkészíteni.
 
-Az alapértelmezett szabály fájl (\texttt{.json} fájl) egy JavaScript objektumot tartalmazó fájl, melyben fel van sorolva a fordítóhoz tartozó összes szabály egy, vagy több hozzárendelt értékkel. A szabályokhoz minden esetben tartozik szám, mely meghatározza, hogy elemzés közben adott szabálysértést detektálni akarjuk-e, és milyen súlyosságot kívánunk hozzá rendelni az elemzés eredményében. Ez az szám 0, 1 vagy 2 értéket vehet fel, 0 esetén átlépji, 1 esetén figyelmeztetésként (warningként), 2 esetén pedig hibaként észleli a program. A második érték, mely nem minden szabálynál található meg, bővebb információt tartalmaz arról hogy pontosan milyen fajtáját detektálja a program. 
+Az alapértelmezett szabály fájl (\texttt{.json} fájl) egy JavaScript objektumot tartalmazó fájl, melyben fel van sorolva a fordítóhoz tartozó összes szabály egy, vagy több hozzárendelt értékkel. A szabályokhoz minden esetben tartozik szám, mely meghatározza, hogy elemzés közben adott szabálysértést detektálni akarjuk-e, és milyen súlyosságot kívánunk hozzá rendelni az elemzés eredményében. Ez az szám 0, 1 vagy 2 értéket vehet fel, 0 esetén átlépi, 1 esetén figyelmeztetésként (warningként), 2 esetén pedig hibaként észleli a program. A második érték, mely nem minden szabálynál található meg, bővebb információt tartalmaz arról hogy pontosan milyen fajtáját detektálja a program. 
 
 \begin{lstlisting}[caption={Szabálysértések megadása .json állományban},label={lst:jsonconfig}, language={JavaScript}]
 { 
@@ -136,8 +136,8 @@ Az alapértelmezett szabály fájl (\texttt{.json} fájl) egy JavaScript objektu
 \end{lstlisting}
 
 A másik szabály fájl (.rul.md) ugyan ezeket a szabályokat tartalmazza egy átláthatóbb formátumban. Ebben a fájlban a szabálysértésekhez a súlyosságukon kívül kulcsszavak és leírás is tartozik, melyek alapján a szoftvercsomag felhasználói személyre szabhatják az elemzést.
-Ennek a szabályfájlnak módosításához korábbi eszközkészlet verziókban egy több lépésből álló folyamat volt. Eredetileg '.rul' típusú állományokat használtak fel a szabálysértéseket vizsgáló programok. Ezeknek a módosítása során először a módosítandó szabályfájlt '.md' állománnyá kellett konvertálni és a kellő módosításokat Markdown formátumban megírni a fájlban jelen lévő formai követelmények alapján. Ezután a módosított '.md' fájlt html állománnyá (HyperTextMarkupLanguage), majd vissza '.rul' állománnyá kellett visszaaállítani külső segédprogramok használatával.
-Ez a folyamat a jelenlegi eszközkészlet verzión belül jelentősen rövidebb lett. Az új szabályokat a '.rul.md' állományban formai követelményeknek megfelelően, hosszas konvertálások nélkül lehet implementálni. A szabályokat h2-es fejlécekkel tagolva adjuk meg. Ezen fejléceknél adjuk meg a belső azonosítóját az adott szabálynak, majd alatta h4-es fejlécekkel felsorolva adjuk meg a szabály információit. 
+Ennek a szabályfájlnak módosításához korábbi eszközkészlet verziókban egy több lépésből álló folyamat volt. Eredetileg \texttt{.rul} típusú állományokat használtak fel a szabálysértéseket vizsgáló programok. Ezeknek a módosítása során először a módosítandó szabályfájlt '.md' állománnyá kellett konvertálni és a kellő módosításokat Markdown formátumban megírni a fájlban jelen lévő formai követelmények alapján. Ezután a módosított '.md' fájlt html állománnyá (HyperTextMarkupLanguage), majd vissza \texttt{.rul} állománnyá kellett visszaaállítani külső segédprogramok használatával.
+Ez a folyamat a jelenlegi eszközkészlet verzión belül jelentősen rövidebb lett. Az új szabályokat a \texttt{.rul.md} állományban formai követelményeknek megfelelően, hosszas konvertálások nélkül lehet implementálni. A szabályokat h2-es fejlécekkel tagolva adjuk meg. Ezen fejléceknél adjuk meg a belső azonosítóját az adott szabálynak, majd alatta h4-es fejlécekkel felsorolva adjuk meg a szabály információit. 
 
 \begin{itemize}
     \item Az 'OriginalId' mező tartalmazza az elemző által felismert szabály nevét.
@@ -235,13 +235,20 @@ Adott, minden node esetén megjelenő tulajdonság kiíratása után le kell gen
 Ezekkel a funkciókkal bejárjuk az adott node-oknak a first visit attribútumait, és az edge settereit és, mint eddig nevek alapján tettük, tulajdonság nevekre és típusokra szűrve írattatom ki a megfelelő settereket.
 First visit attribútumok esetén, mivel adott node-oknál más típusú attribútumok fordulhatnak elő, vagy szituációtól függően máshogy kell beállítani az attribútumokat, ezeket külön külön kiszűrjük futásidő folyamán.
 
-\begin{lstlisting}[caption={Attribútum szűrésről példa},label={lst:attributefilter}, style={CStyle}]
-if ((strcmp(currentNode->name, "TSAbstractMethodDefinitionComputedName") == 0 || strcmp(currentNode->name, "TSMethodSignatureComputedName") == 0 || strcmp(currentNode->name, "MethodDefinitionComputedName") == 0) && strcmp(lowerName, "kind") == 0) {
-    fprintf(f, "        if (node.%s != null) %s.set%s(conversions.convertMethodDefinitionKind(node.%s));\n", lowerName, currentNode->name, upperName, lowerName);
-}
-else if (strcmp(lowerName,"kind") == 0 || strcmp(lowerName, "importKind") == 0 || strcmp(lowerName, "exportKind") == 0 || strcmp(lowerName, "accessibility") == 0) {
-    fprintf(f, "        if (node.%s != null) %s.set%s(conversions.convertKinds(node.%s));\n", lowerName, currentNode->name, upperName, lowerName);
-}
+\begin{lstlisting}[caption={Attribútum szűrésről példa},label={lst:attributefilter}, style={CStyle},basicstyle=\fontsize{9}{11}\selectfont\ttfamily]
+if (
+  (strcmp(currentNode->name, "TSAbstractMethodDefinitionComputedName") == 0 
+  || strcmp(currentNode->name, "TSMethodSignatureComputedName") == 0 
+  || strcmp(currentNode->name, "MethodDefinitionComputedName") == 0) 
+  && strcmp(lowerName, "kind") == 0) {
+  fprintf(f, "if (node.%s != null) %s.set%s(
+    conversions.convertMethodDefinitionKind(node.%s));\n", 
+    lowerName, currentNode->name, upperName, lowerName);}
+else if (strcmp(lowerName,"kind") == 0 
+  || strcmp(lowerName, "importKind") == 0 
+  || strcmp(lowerName, "exportKind") == 0 
+  || strcmp(lowerName, "accessibility") == 0) {
+  fprintf(f, "if (node.%s != null) %s.set%s(conversions.convertKinds(node.%s));\n", lowerName, currentNode->name, upperName, lowerName);}
 \end{lstlisting}
 
 Él setterek esetén csak két esetre szükséges figyelnünk. Mivel minden él setter esetén más node-okat kapnak a legenerált funkciók, így típusra nem szükséges figyelnünk (mivel ez már schemában le van kezelve), kizárólag a multiplicitást kell ellenőriznünk, azaz egy adott node tulajdonsághoz egy nodeot, vagy egy tömbnek a nodejait rendeljük.
@@ -260,7 +267,7 @@ Miután ezeket a lépéseket minden szükséges nodera elvégeztük, a program �
 A generált fájlok átmásolása a projekt fordítása folyamán történik meg. A fájlokat a korábban említett javascriptAddon mellé generáljuk egy mappában, mely struktúrálisan már elő van készítve másolásra, rendelkezik a megfelelő mappaszerkezettel. Korábbi fordításpl során ha a JSAN-t akartuk lefordítani, a SchemaGenerátor automatikusan meg volt hívva javascriptAddon generálására és megfelelő helyre másolására, így az új fájlokat is ehhez a folyamathoz rendeltem. A programhoz tartozó CMakeList-ben adtam meg utasításként a másolási parancsot. Emellett figyeltem arra, hogy a fájlok generálásához szükséges parancsok azután vannak meghívva, amikor az addon fájl, és ezzel együtt az újonnan létrehozott fájlok generálása végbe ment.
 Az alább látható ábrán \texttt{-copy\_directory} CMake parancs használatával volt ez megvalósítva.
 
-\begin{lstlisting}[caption={JSAN Cmake utasítások},label={lst:jsancmake}, language={JavaScript}]
+\begin{lstlisting}[caption={JSAN Cmake utasítások},label={lst:jsancmake}, language={JavaScript}, basicstyle=\fontsize{9}{11}\selectfont\ttfamily]
 add_custom_command (
     OUTPUT ${EXECUTABLE_OUTPUT_PATH}/node_modules/${PROGRAM_NAME}
     COMMAND ${CMAKE_COMMAND} -E copy ${EXECUTABLE_OUTPUT_PATH}/javascriptAddon.node ${EXECUTABLE_OUTPUT_PATH}/tmp_${PROGRAM_NAME}/
@@ -273,12 +280,12 @@ add_custom_command (
 )
 \end{lstlisting}
 
-Ezzel a bővítéssel jelentősen elő lettek segítve a JSAN jövőbeli fejlesztései. Jelentősebb AST változtatások esetén nem lesz szükséges az összes node manuális átnézése és ellenőrzése, hanem csak adott sablonokon kell néhány sorral bővíteni vagy módosítani, mely drasztikusan felgyorsítja a folyamatot. Automatikus generálás esetén olyan problémákat is elkerülhetünk, melyek emberi figyelmetlenségből erjednek, például hibás változó deklarálások, melyek könnyen előfordulhatnak többszáz fájl módosítása esetén. Emellett fejlesztés során pár kisebb hibát is észrevettem az AST-ben, melyek javításra kerültek. 
+Az AST-hez tartozó fájlok automatikus legenerálásának köszönhetően a JSAN karbantartása egyszerűbb lett. Jelentősebb AST változtatások esetén nem lesz szükséges az összes node manuális átnézése és ellenőrzése, hanem csak adott sablonokon kell néhány sorral bővíteni vagy módosítani, mely drasztikusan felgyorsítja a folyamatot. Automatikus generálás esetén olyan problémákat is elkerülhetünk, melyek emberi figyelmetlenségből erjednek, például hibás változó deklarálások, melyek könnyen előfordulhatnak többszáz fájl módosítása esetén. Emellett fejlesztés során pár kisebb hibát is észrevettem az AST-ben, melyek javításra kerültek. 
 
 \section{JSCG bővítése}
 
 \subsection{JSCG bevezetés, hiba felvázolása}
-A JSCG, mint korábban említve volt, JSAN által van használva hívásgráf előállítására, melyet a szoftvercsomag későbbi eszközei használnak fel például különböző metrikák számolására. A program futtatása JSAN-on belül történik meg, közvetlen miután az elemzett projekthez tartozó kódbázisnak a fájljai alapján elkészült az AST. Ezeket paraméterként átadja a JSAN a JSCG-nek és meghatározza, hogy milyen stratégiával készítse el a hívásgráfot. Jelenleg 'NONE', 'ONESHOT' és 'DEMAND' stratégiák használata áll rendelkezésre, melyek közül a 'ONESHOT' van felhasználva. A stratégiák közötti különbség az intreprocedúrális (eszközeljárási) áramlat követésében különböznek. Nevének megfelelően a 'NONE' stratégia ezt nem követi, míg a ONESHOT csak az azonnal meghívott egyszeri lezárások esetében teszi meg.
+A JSCG, mint korábban említve volt, JSAN által van használva hívásgráf előállítására, melyet a szoftvercsomag későbbi eszközei használnak fel például különböző metrikák számolására. A program futtatása JSAN-on belül történik meg, közvetlen miután az elemzett projekthez tartozó kódbázisnak a fájljai alapján elkészült az AST. Ezeket paraméterként átadja a JSAN a JSCG-nek és meghatározza, hogy milyen stratégiával készítse el a hívásgráfot. Jelenleg 'NONE', 'ONESHOT' és 'DEMAND' stratégiák használata áll rendelkezésre, melyek közül a 'ONESHOT' van felhasználva. A stratégiák közötti különbség az interprocedúrális áramlat követésében különböznek. Nevének megfelelően a 'NONE' stratégia ezt nem követi, míg a ONESHOT csak az azonnal meghívott egyszeri lezárások esetében teszi meg.
 JavaScript esetében szükséges volt a hívásgráfok legenerálása a nyelv dinamukissága miatt\cite{feldthaus2013efficient}. Ez TypeScript projekteknél is szükséges, mivel JavaScript nyelv bővítésére szolgál.
 
 \subsection{Bővítés, hibajavítás lépései}

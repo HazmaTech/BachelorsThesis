@@ -5,11 +5,11 @@
 
 A TypeScript nyelv támogatásának megvalósításához a szoftvercsomag programjai közötti függőségek miatt több programban szükséges volt változtatásokat létrehozni.
 Működésbeli szempontok miatt külön séma létrehozása szükséges volt az új nyelvhez, mely tartalmazza visszamenőleg a JavaScript nyelv elemzéséhez szükséges elemeket.
-Az én feladatom része az ESLintRunner nevű programban az új nyelv támogatásának teljeskörű implementálása, JSAN és JSCG nevű programokban pedig meglévő támogatás bővítése.
+Az én feladatom része az ESLintRunner nevű programban az új nyelv támogatásának teljeskörű integrálása, JSAN és JSCG nevű programokban pedig meglévő támogatás bővítése.
 
 Az ESLintRunner programon belül korábban csak JavaScript támogatás volt implementálva. Ennek bővítéséhez szükséges volt új "parser", avagy fordító bevezetése és a hozzá tartozó új szabályok implementálása volt szükséges.
 
-JSAN-on belül a nyelv elemzéséhez használt, különálló feladatok automatikus legenerálását valósítottam meg, melynek segítségével könnyebben karbantarthatóbbá vált az eszköz.
+JSAN-on belül a nyelv elemzéséhez használt, különálló fájlok automatikus legenerálását valósítottam meg, melynek segítségével könnyebben karbantarthatóbbá vált az eszköz.
 
 JavaScriptCallGraph, avagy JSCG-n belül korábban nem támogatott nyelvi elemek elemzéséhez szükséges funkciókat implementáltam, mely a JSAN elemzési képességén javított.
 Ezek mellett egyéb, teszteléssel kapcsolatos változtatásokat volt szükséges implementálni.
