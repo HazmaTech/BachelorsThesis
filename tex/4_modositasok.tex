@@ -281,8 +281,66 @@ Ezzel a bővítéssel jelentősen elő lettek segítve a JSAN jövőbeli fejlesz
 A JSCG, mint korábban említve volt, JSAN által van használva hívásgráf előállítására, melyet a szoftvercsomag későbbi eszközei használnak fel például különböző metrikák számolására. A program futtatása JSAN-on belül történik meg, közvetlen miután az elemzett projekthez tartozó kódbázisnak a fájljai alapján elkészült az AST. Ezeket paraméterként átadja a JSAN a JSCG-nek és meghatározza, hogy milyen stratégiával készítse el a hívásgráfot. Jelenleg 'NONE', 'ONESHOT' és 'DEMAND' stratégiák használata áll rendelkezésre, melyek közül a 'ONESHOT' van felhasználva. A stratégiák közötti különbség az intreprocedúrális (eszközeljárási) áramlat követésében különböznek. Nevének megfelelően a 'NONE' stratégia ezt nem követi, míg a ONESHOT csak az azonnal meghívott egyszeri lezárások esetében teszi meg.
 JavaScript esetében szükséges volt a hívásgráfok legenerálása a nyelv dinamukissága miatt\cite{feldthaus2013efficient}. Ez TypeScript projekteknél is szükséges, mivel JavaScript nyelv bővítésére szolgál.
 
-A program már rendelkezett kezdetleges TypeScript támogatással, viszont jelentős mennyiségű node lekezelésére nem volt meghatározva működés. Ezen kívül specifikus TypeScript nyelvtani tényezők észlelése esetén hibába futott a program, mivel eddigi implementáció alapján érvénytelen adatot olvasott be. Ezek a változtatások, JSAN-hoz hasonló módon az új typescript-eslint elemző által használt AST specifikáció alapján lett megvalósítva.
-
 \subsection{Bővítés, hibajavítás lépései}
 
+A program már rendelkezett kezdetleges TypeScript támogatással, viszont jelentős mennyiségű node lekezelésére nem volt meghatározva működés. Ezen kívül specifikus TypeScript nyelvtani tényezők észlelése esetén hibába futott a program, mivel eddigi implementáció alapján érvénytelen adatot olvasott be. Ezek a változtatások, JSAN-hoz hasonló módon az új typescript-eslint elemző által használt AST specifikáció alapján lett megvalósítva.
 
+Az előző programok bővítése és folyamatos tesztelések során a JSAN futtatása közben a JSCG által kimutatott hibák alapján voltak meghatározva hogy mely node típusoknál volt szükség változtatásra vagy új működés definiálására. Három fő változtatást kellett megvalósítani:
+
+\begin{itemize}
+    \item \texttt{PrivateIdentifier} észlelés \texttt{Identifier} helyén, melyek osztályokban metódus és változó definiálásoknál találhatóak
+    \item \texttt{Computed} mezők helyes detektálása osztályokon belül
+    \item \texttt{TSEmptyBodyFunctionExpression} helyes bekötése
+\end{itemize}
+
+A három közül a \texttt{TSEmptyBodyFunctionExpression} helyes bekötése volt az első amit megvalósítottam. A program több helyen node típusra szűrve végez el adott utasításokat. Ezen szűrések között voltak olyanok, melyek adott funkció típusokra volt érvényes, ezeket kiszerveztem külön funkcióba és hozzáillesztettem az új típust. A funkciótípusok és azok kezelése azonos módon történik AST specifikáció alapján, így ezeknél elegendő volt az új típus ilyen módú beillesztése.
+
+\begin{lstlisting}[caption={Funkció típus szűrő},label={lst:jsonconfig}, language={JavaScript}]
+function isFunction(nd) {
+    return nd.type === 'FunctionDeclaration' ||
+        nd.type === 'FunctionExpression' ||
+        nd.type === 'ArrowFunctionExpression'
+        nd.type === 'ArrowFunctionExpression' ||
+        nd.type === 'TSEmptyBodyFunctionExpression'
+}
+\end{lstlisting}
+
+\texttt{PrivateIdentifier} esetén hasonló módosításokat hoztam létre, ahol \texttt{Identifier} node típust vizsgált a program, helyettesítettem funkcióval, mely \texttt{PrivateIdentifier} és \texttt{Identifier} típusokra szűrt.
+
+\begin{lstlisting}[caption={Identifier típus szűrő},label={lst:jsonconfig}, language={JavaScript}]
+function isIdentifier(ndType) {
+    return ndType === 'Identifier' ||
+    ndType === 'PrivateIdentifier'
+}
+\end{lstlisting}
+
+\texttt{Computed} mezők teljes körű támogatásának bevezetése működésükből adódóan nem teljesen volt implementálható.
+Ezek a mezők TypeScriptben osztályokban, interfészekben és objektumokban találhatóak, és olyan célt szolgálnak, mellyel futásidő során az említett objektumokhoz dinamikusan nevekkel adhatunk meg metódusokat. Kapcsos zárójeleken belül primitív típusok (szöveg, szám) megadása és ezek között elvégezhető műveletek mellett változókat is megadhatunk, melyeknek értékei lesznek felhasználva a metódus nevének meghatározására.
+
+\begin{lstlisting}[caption={Computed mező példa},label={lst:jsonconfig}, language={JavaScript}]
+module.exports = {
+    ['foobar3']() {
+      return 'fizz';
+    },
+};
+\end{lstlisting}
+
+Ebből adódóan pontos bekötéseket a hívásgráfba nem lehet létrehozni, mivel a projekt futtatása nélkül pontos név megadása ezeknek a mezőknek nem lehetséges.
+\texttt{FunctionExpression} típusú nodeok esetén, melyek \texttt{Property} típusú nodeból származnak (azaz a korábban említett objektumok valamelyikének egyik metódusaként van deklarálva), adott esetekre definiáltam ideiglenes működést.
+
+Három gyakori esetre szűrtem le működést. Amikor primitív adattípusokkal, vagy azok között valamilyen művelettel volt megadva érték, akkor az említett node-oknak az értékeit állítottam be mint azonosító. Emellett olyan esetben, amikor változó volt értékként megadva, a változó nevét adtam meg azonosítóként.
+
+\begin{lstlisting}[caption={Azonosító beállítás példa},label={lst:jsonconfig}, language={JavaScript}]
+if (parent.key) {
+    if(parent.key.left && parent.key.right) {
+        nd.id = {
+            type: 'Identifier',
+            name: parent.key.left.value + parent.key.right.value,
+            range: parent.key.range,
+            loc: parent.key.loc
+        }
+}
+...
+\end{lstlisting}
+
+Változtatások után a a kódon belül érintett dokumentációkat felfrissítettem megfelelő külső hivatkozásokkal és AST referenciákkal. Emellett új teszteseteket is létrehoztam helyes működés ellenőrzésére.
