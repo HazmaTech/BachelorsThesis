@@ -25,7 +25,6 @@ A SourceMeter for Javascript szoftvercsaládban a forráskód elemzés egyik els
 <ESLintToGraph version='4.3'>
     <file name='C:\\path\\to\\file\\test.ts'>
         <error line='4' column='9' severity='warning' ruleId='no-console' nodeType='MemberExpression' message='Unexpected console statement.' />
-        <error line='4' column='9' severity='warning' ruleId='no-undef' nodeType='Identifier' message=' &apos; console &apos;  is not defined.' />
         <error line='4' column='21' severity='warning' ruleId='@typescript-eslint/restrict-plus-operands' nodeType='BinaryExpression' message='Operands of  &apos; + &apos;  operation must either be both strings or both numbers. Consider using a template literal.' />
     </file>
 </ESLintToGraph>
@@ -218,11 +217,11 @@ if (strstr(node->name, "NonComputedName") != NULL) {
 ...
 \end{lstlisting}
 
-Ezek a node-ok speciális módon vannak megkülönböztetve az AST-ben és a futásidő közben elemzett node-ok között. AST-ben ezek különbözőbejegyzéseket kapnak azonos tulajdonságokkal, viszont egy ilyen tulajdonságuk név alapján kapnak értéket. A node-ok tartalmaznak egy \texttt{computed} mezőt, mely \texttt{Computed} node-oknál igaz értéket kapnak, \texttt{NonComputed} esetén pedig hamis értéket. Elemzés során viszont ezek a node-ok nincsenek névlegesen megkülönböztetve, de a \texttt{computed} mező alapján különböző típusú node-nak számítanak.
-Emellett vannak absztrakt node-ok is meghatározva az AST-ben, melyek a sémában megjelennek mint node-ok, de elemzés során nem jelennek meg. Ezek a fájlgenerálás folyamán kihagyhatóak, kivéve a LiteralExpression, ami absztrakt létének ellenére szükséges, mint összefoglaló node a literál típusokra.
+Ezek a node-ok speciális módon vannak megkülönböztetve az AST-ben és a futásidő közben elemzett node-ok között. AST-ben ezek különböző bejegyzéseket kapnak azonos tulajdonságokkal, viszont egy ilyen tulajdonságuk név alapján kapnak értéket. A node-ok tartalmaznak egy \texttt{computed} mezőt, mely \texttt{Computed} node-oknál igaz értéket kapnak, \texttt{NonComputed} esetén pedig hamis értéket. Elemzés során viszont ezek a node-ok nincsenek névlegesen megkülönböztetve, de a \texttt{computed} mező alapján különböző típusú node-nak számítanak.
+Emellett vannak absztrakt node-ok is meghatározva az AST-ben, melyek a sémában megjelennek mint node-ok, de elemzés során nem. Ezek a fájlgenerálás folyamán kihagyhatóak, kivéve a LiteralExpression, ami absztrakt létének ellenére szükséges, mint összefoglaló node a literál típusokra.
 
 Ezek lekezelése könnyen elvégezhető azzal, hogy névre és adott tulajdonságokra szűrve kihagyunk adott node-ok generálását. 
-Ebben az esetben kiszűri az absztrakt node-okat, melyeknek a neve nem \texttt{LiteralExpression}, majd azokat, melyeknek a neve tartalmazza a \texttt{NonComputedName} szövegrészletet. Azért szűrünk kifejezetten \texttt{NonComputedName}-re, mert a node párosokból legalább az egyikre szükség van hogy helyesen lehessen legenerálni a switchet. Ezekben az esetekben a node nevének végéről a \texttt{ComputedName} szövegrészletet levágja és úgy illesztődik be a fájlokba.
+Ebben az esetben kiszűri az absztrakt node-okat, melyeknek a neve nem \texttt{LiteralExpression}, majd azokat, melyeknek a neve tartalmazza a \texttt{NonComputedName} szövegrészletet. Azért szűrünk kifejezetten \texttt{NonComputedName}-re, mert a node párosokból legalább az egyikre szükség van hogy helyesen lehessen legenerálni a switchet.
 
 \begin{lstlisting}[caption={Computed és NonComputed node-ok kezelése},label={lst:abs-compnoncomp}, style={CStyle}]
 if (strstr(fileNameWithExtension, "ComputedName")) 

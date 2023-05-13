@@ -14,7 +14,7 @@ A SourceMeter eszközkészletet egy másik forráskód elemző eszközben, a Son
 A SonarQube-on kívül a QualityGate nevű szoftver is felhasználja a SourceMeter szoftvercsomagjait \cite{6747214}. A QualityGate a SourceMeter által készített metrikákat és jelentéseket használja az alkalmazás minőségének és biztonságának értékeléséhez, és automatikusan jelzi a fejlesztőknek, ha az alkalmazás nem felel meg a meghatározott küszöbértékeknek. Ez segíti a fejlesztőket abban, hogy gyorsan és hatékonyan javítsák az alkalmazásukat, és biztosítják, hogy az megfelelő minőségű és biztonságos legyen.
 
 Mindegyik szoftvercsomaghoz tartozik az elemzett nyelv alapján egy előre elkészített séma, mely egy Absztrakt Szemantikus Gráfot, másnéven ASG-t tartalmaz. Az elemzés lépései során ezek alapján végzik feladataikat a csomag programjai. Ezek lehetnek Absztrakt Szintaxis Fa, avagy AST felépítése, metrikák számolása, kódolási szabálysértések keresésére és ezek mindegyikének felhasználása duplikált kódszegmensek detektálására.
-Ezen sémák az elemzett nyelvnek nyelvtanának és szemantikájának megfelelő szerkezetét tartalmazzák, melyekben a csomópontok adott nyelvtani elemeket, az élek pedig az elemek közötti kapcsolatot reprezentálják. Egy példa erre \aref{fig:sema_pelda} ábrán látható:
+Ezen sémák az elemzett nyelvnek nyelvtanának és szemantikájának megfelelő szerkezetét tartalmazzák, melyekben a csomópontok adott nyelvtani elemeket, az élek pedig az elemek közötti kapcsolatot reprezentálják. Egy példa erre \aref{fig:sema_pelda}-es ábrán látható:
 
 \begin{figure}[!htbp]
     \caption{Sémában található elemek, kapcsolataik}\label{fig:sema_pelda}
