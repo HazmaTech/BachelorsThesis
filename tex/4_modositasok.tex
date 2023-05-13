@@ -18,9 +18,9 @@ Annak érdekében hogy teljeskörű, lehetőleg hibamentes támogatást tudjunk 
 \section{ESLintRunner bővítése TypeScript támogatáshoz}
 
 \subsection{ESLintRunner bevezető}
-A SourceMeter for Javascript szoftvercsaládban a forráskód elemzés egyik első lépéseként az ESLintRunner nevű programot futtatja le az elemzendő projekten. Ez a program kimutatja, hogy milyen, előre meghatározott kódolási szabálysértéseket ejtettek a fejlesztés során, és listázza ezen hibák pontos helyét hogy mely fájlokban fordulnak elő, sor és karakter pontosságra. Ezeket egy .xml formátumú fájlba helyezi a program futás után, melyre \aref{lst:eslintoutput}-es ábrában szerepel példa.
+A SourceMeter for Javascript szoftvercsaládban a forráskód elemzés egyik első lépéseként az ESLintRunner nevű programot futtatja le az elemzendő projekten. Ez a program kimutatja, hogy milyen, előre meghatározott kódolási szabálysértéseket ejtettek a fejlesztés során, és listázza ezen hibák pontos helyét, mely fájlokban fordulnak elő, sor és karakter pontosságra. Ezeket egy \texttt{.xml} formátumú fájlba helyezi a program lefutás után, melyre \aref{lst:eslintoutput}-es ábrában szerepel példa.
 
-\begin{lstlisting}[caption={ESLintRunner kimeneti fájl példa},label={lst:eslintoutput}, language={xml},basicstyle=\fontsize{9}{11}\selectfont\ttfamily]
+\begin{lstlisting}[caption={ESLintRunner eredmény fájl példa},label={lst:eslintoutput}, language={xml},basicstyle=\fontsize{9}{11}\selectfont\ttfamily]
 <?xml version='1.0' encoding='utf-8'?>
 <ESLintToGraph version='4.3'>
     <file name='C:\\path\\to\\file\\test.ts'>
@@ -35,13 +35,13 @@ Ez a program egy úgynevezett ``parser'', avagy fordító segítségével tudja 
 
 \subsection{Megtett lépések az új nyelv támogatásához}
 
-Ahhoz, hogy TypeScript nyelv elemzésének a támogatását megvalósíthassam, ezen beállításokban megadtam a fordító opciónak (\texttt{parser} mező) az újonnan importált 'typescript-eslint' \cite{typescript-eslint} csomagnak a fordító modulját, majd a bővítmények közé (\texttt{plugin} mező) a csomag \texttt{eslint-plugin} modulját. 
+Ahhoz, hogy TypeScript nyelv elemzésének a támogatását megvalósíthassam, ezen beállításokban megadtam a fordító opciónak (\texttt{parser} mező) az újonnan importált \texttt{typescript-eslint} \cite{typescript-eslint} csomagnak a fordító modulját, majd a bővítmények közé (\texttt{plugin} mező) a csomag \texttt{eslint-plugin} modulját. 
 A bővítmény megadása engedélyezi a programnak, hogy TypeScript nyelvhez kötődő, speciális szabálysértéseket detektálhasson és korábbi, JavaScriptes szabálysértéseket bővítsen ki új, opcionális információkkal. 
 
-Emellett helyes működés eléréséhez szükséges volt megadni az elemezhető fájlok kiterjesztését, melyet a felülbírálásoknál (\texttt{overrides} objektum) külön a \texttt{files} és a beágyazott \texttt{parser} mezőkben definiáltam. A mezők egyszerre tartalmazzák a JavaScript (.js és .jsx) és a TypeScript (.ts és .tsx) nyelvekhez tartozó kiterjesztéseket kompatibilitás megőrzése érdekében. Hiányában az alapértelmezett értékek töltődnek be futásidő során a fordítóhoz, mely nem kívánt működésben és eredményekben járulna. Az új fordító esetében azt jelentené, hogy csak TypeScript fájlok elemzése menne végbe. \Aref{lst:tsconfig}-es ábrán láthatóak ezek a változtatások.
+Emellett helyes működés eléréséhez szükséges volt megadni az elemezhető fájlok kiterjesztését, melyet a felülbírálásoknál (\texttt{overrides} objektum) külön a \texttt{files} és a beágyazott \texttt{parser} mezőkben definiáltam. A mezők egyszerre tartalmazzák a JavaScript (\texttt{.js} és \texttt{.jsx}) és a TypeScript (\texttt{.ts} és \texttt{.tsx}) nyelvekhez tartozó kiterjesztéseket kompatibilitás megőrzése érdekében. Hiányában az alapértelmezett értékek töltődnek be futásidő során a fordítóhoz, mely nem kívánt működésben és eredményekben járulna. Az új fordító esetében azt jelentené, hogy csak TypeScript fájlok elemzése menne végbe. \Aref{lst:tsconfig}-es ábrán láthatóak ezek a változtatások.
 
 \begin{lstlisting}[caption={Elemző és bővítmény megadása},label={lst:tsconfig}, language={JavaScript},basicstyle=\fontsize{9}{11}\selectfont\ttfamily]
-    const typeScriptOptions = {
+const typeScriptOptions = {
 ...
 overrides: [
     settings: {
@@ -57,9 +57,10 @@ plugins: [
 ],
 parser: "@typescript-eslint/parser",
 ...
+}
     \end{lstlisting}
 
-A beállításokhoz szükséges volt új mezők megadása is. A \texttt{parserOptions} mezőn belül szükséges futásidő során a \texttt{project} és a \texttt{tsConfigRootDir} beállítások megadása. A \texttt{project} a TypeScript nyelvben írt projektek konfigurációs fájljainak (névlegesen tsconfig.json) tartalmazza az útvonalait. Ezek alapján tudja az ESLintRunner észlelni, hogy mely fájlokat szükséges elemezni a kódbázisból futásidő során. A \texttt{tsConfigRootDir} mező segítségével megadhatjuk, hogy az előbb beállított konfigurációs fájlok közül melyik tartozik az elemzett projekt gyökérkönyvtárába, ami szükséges adott speciális kódolási szabálysértések helyes működéséhez.
+A beállításokhoz szükséges volt új mezők megadása is. A \texttt{parserOptions} mezőn belül szükséges futásidő során a \texttt{project} és a \texttt{tsConfigRootDir} beállítások megadása. A \texttt{project} a TypeScript nyelvben írt projektek konfigurációs fájljainak (névlegesen \texttt{tsconfig.json}) tartalmazza az útvonalait. Ezek alapján tudja az ESLintRunner észlelni, hogy mely fájlokat szükséges elemezni a kódbázisból futásidő során. A \texttt{tsConfigRootDir} mező segítségével megadhatjuk, hogy az előbb beállított konfigurációs fájlok közül melyik tartozik az elemzett projekt gyökérkönyvtárába, ami szükséges adott speciális kódolási szabálysértések helyes működéséhez.
 
 \begin{lstlisting}[caption={Szabálysértések megadása .json állományban},label={lst:jsonconfig}, language={JavaScript}]
 parserOptions: {
@@ -72,7 +73,7 @@ parserOptions: {
 },
 \end{lstlisting}
 
-Ahhoz, hogy ezen beállítások futásidő során helyesen be lehessen állítani, elemzés előtt kell átvizsgálni a programmal az elemzendő projektnek a mappaszerkezetét. Mivel formailag kötelező TypeScript projekteknek a gyökérkönyvtárában, így a \texttt{tsConfigRootDir} mező beállítása megegyezik az elemzett projekt útvonalával. Konfigurációs fájlokból viszont egyszerre több is megadható, emiatt a mappaszerkezetben található összes ilyen fájlt meg kell adnunk a \texttt{project} mezőbe. 
+Ahhoz, hogy ezen beállítások futásidő során helyesen be lehessen állítani, elemzés előtt kell átvizsgálni a programmal az elemzendő projektnek a mappaszerkezetét. Mivel formailag kötelező, hofy TypeScript projekteknek a gyökérkönyvtárában szerepeljen egy \texttt{tscongig.json} fájl, így a \texttt{tsConfigRootDir} mező beállítása megegyezik az elemzett projekt útvonalával. Konfigurációs fájlokból viszont egyszerre több is megadható, emiatt a mappaszerkezetben található összes ilyen fájlt meg kell adnunk a \texttt{project} mezőbe. 
 A fordító ahhoz, hogy a felhasználók számára megfelelő elemzést biztosítson, csak azokat a fájlokat elemzi alapesetben, melyek a projekt konfigurációs fájljainak az \texttt{include} mezőiben meg vannak adva. Emellett több kisebb hiba javítása is szükséges volt:
 
 \begin{itemize}
@@ -89,7 +90,7 @@ A fordító ahhoz, hogy a felhasználók számára megfelelő elemzést biztosí
 
 \noindent
 
-\Aref{fig:projconfig} ábrán látható megvalósítás TypeScript nyelvű projektek elemzésére alkalmas, viszont JavaScript projektek és önálló fájlok elemzésére jelen helyzetben nem alkalmas. Ez abból adódik, hogy ezekben az esetekben nem tartozik az elemzendő kódbázishoz vagy fájlhoz konfigurációs fájl. A probléma megoldására ideiglenes fájlt generál a program (ez nem összetévesztendő a korábban említett ideiglenes konfigurációval, mely egy másik hiba javítására szolgál). Ez a fájl, melynek \texttt{include} mezője tartalmazza projekt esetén a gyökérkonyvtártól számítva a mappaszerkezet összes, kiterjesztésnek megfelelő fájlt, melyek megegyeznek az eddig megadott kiterjesztésekkel a fordító beállításaival. Önálló fájl esetén az \texttt{include} mező csak az elemzett fájlt tartalmazza.
+\Aref{fig:projconfig}-es ábrán látható megvalósítás TypeScript nyelvű projektek elemzésére alkalmas, viszont JavaScript projektek és önálló fájlok elemzésére jelen helyzetben nem alkalmas. Ez abból adódik, hogy ezekben az esetekben nem tartozik az elemzendő kódbázishoz vagy fájlhoz konfigurációs fájl. A probléma megoldására ideiglenes fájlt generál a program (ez nem összetévesztendő a korábban említett ideiglenes konfigurációval, mely egy másik hiba javítására szolgál). Ez a fájl, melynek \texttt{include} mezője tartalmazza projekt esetén a gyökérkonyvtártól számítva a mappaszerkezet összes, kiterjesztésnek megfelelő fájlt, melyek megegyeznek az eddig megadott kiterjesztésekkel a fordító beállításaival. Önálló fájl esetén az \texttt{include} mező csak az elemzett fájlt tartalmazza.
 Ilyen elemzések során az ideiglenes konfigurációs fájl van egyedül megadva a \texttt{tsConfigRootDir} mezőben. A fájl az elemzés lefutása után törlésre kerül.
 Ezzel a módszerrel a fordító alkalmas egyszerre TypeScript és JavaScript nyelven írt fájlok és projektek elemzésére. 
 
@@ -99,11 +100,11 @@ Ezzel a módszerrel a fordító alkalmas egyszerre TypeScript és JavaScript nye
     \includegraphics[width=0.9\textwidth]{tempconfig.png}
 \end{figure}
 
-Az ESLintRunner futtatásához szükséges használat előtt a programot és a hozzá tartozó modulokat egy önálló fájlba ``összetömöríteni'' a webpack nevű szoftvercsomaggal. A program működése TypeScript nyelv támogatás implementálása előtt nem függött külső bővítményektől. Összetömörítés után futás közben az alapértelmezett, ``esprima'' nevű fordítóval elemzett, mely az eddig használt modulokba beépítve volt. Az újonnan használt bővítmények használata miatt a program fordítója kényszerítve van külső útvonalak vizsgálatára. A program önmagára nem tud hivatkozni, mivel ezzel az alapértelmezett fordítót használná eddigi implementáció miatt, a modulokat tartalmazó mappát (\texttt{node\_modules} nevű mappa) tömörítés során pedig nem másoljuk át a kimeneti útvonalra. Erre a probléma megoldására többek között a webpack beállításainak módosításával és alternatív kötegelő programok alkalmazásával próbálkoztam. A webpack alternatívák, melyek közé tartozik a Parcel, a Browserify és a Rollup.js, eggyike sem volt alkalmas megoldás, mivel mindegyik hasonló, már webpack használata közben észlelt hibákat állított elő. Észrevehető, egyéb különbségként a használatuk változó nehézsége és gyengébb teljesítményüknek köszönhetően a webpack beállítások módosítása maradt.
+Az ESLintRunner futtatásához szükséges használat előtt a programot és a hozzá tartozó modulokat egy önálló fájlba ``összetömöríteni'' a webpack nevű szoftvercsomaggal. A program működése TypeScript nyelv támogatás implementálása előtt nem függött külső bővítményektől. Összetömörítés után futás közben az alapértelmezett, ``esprima'' nevű fordítóval elemzett, mely az eddig használt modulokba volt beépítve. Az újonnan használt bővítmények használata miatt a program fordítója kényszerítve van külső útvonalak vizsgálatára. A program önmagára nem tud hivatkozni, mivel ezzel az alapértelmezett fordítót használná eddigi implementáció miatt, a modulokat tartalmazó mappát (\texttt{node\_modules} nevű mappa) tömörítés során pedig nem másoljuk át a kimeneti útvonalra. Erre a probléma megoldására többek között a webpack beállításainak módosításával és alternatív kötegelő programok alkalmazásával próbálkoztam. A webpack alternatívák, melyek közé tartozik a \texttt{Parcel}, a \texttt{Browserify} és a \texttt{Rollup.js}, eggyike sem volt alkalmas megoldás, mivel mindegyik hasonló, már webpack használata közben észlelt hibákat állított elő. Észrevehető, egyéb különbségként a használatuk változó nehézsége és gyengébb teljesítményüknek köszönhetően a webpack beállítások módosítása maradt.
 
 Webpack konfigurációban a modul importálások rezolválására használt ``álnevek'' (alias) beállítása szolgálhatott volna megoldásul \cite{webpack-resolve}. Ezzel meg lehet adott moduloknak határozni, hogy milyen néven lehessen a programon belül importálni. Ismételt módon a fordító egyedi működésének köszönhetően ez nem használható megoldás, mert a felhasznált pluginokat csak név szerint adjuk meg konfigurációval, nem pedig import utasításokkal.
 
-A végső megoldása ennek a hibának bár egyszerű, később változtatást igényel, amint a fordító program bővítmény kezelésén frissítenek. A program kötegelése során a generált fájl mellé a modulokat tartalmazó mappát is átmásolásra kerül. Ezt a szoftvercsomag fordítása során van elvégezve CMake parancs segítségével, mely \aref{lst:cmakeeslint}-es ábrán látható. Ennek köszönhetően futásidő folyamán a keresett modult megtalálja és hibamentesen tudja feladatát végezni. Ennek legfőbb hátránya, hogy a program által foglalt hely többszörösére nőtt. A kötegelési módszer változtatása eddigi tesztelések alapján futásidőn nem rontott.
+A végső megoldása ennek a hibának bár egyszerű, később változtatást igényel, amint a fordító program bővítmény kezelésén frissítenek. A program ``kötegelése'' során a generált fájl mellé a modulokat tartalmazó mappa is átmásolásra kerül. Ez a szoftvercsomag fordítása során van elvégezve CMake parancs segítségével, mely \aref{lst:cmakeeslint}-es ábrán látható. Ennek köszönhetően futásidő folyamán a keresett modult megtalálja és hibamentesen tudja feladatát végezni. Ennek legfőbb hátránya, hogy a program által foglalt hely többszörösére nőtt. A ``kötegelési módszer'' változtatása eddigi tesztelések alapján futásidőn nem rontott.
 
 \begin{lstlisting}[caption={CMake parancs modul mappa másolására},label={lst:cmakeeslint}, language={JavaScript}]
     add_custom_command (
@@ -115,11 +116,11 @@ A végső megoldása ennek a hibának bár egyszerű, később változtatást ig
     )
 \end{lstlisting}
 
-Végül a TypeScript támogatás megvalósításához szükséges volt az új fordító által használt szabálysértések bevezetése a programba. Ehhez kettő különálló fájlt kellett megvalósítanom. A korábban említett \texttt{.json} kiterjesztésű szabály fájl és a \texttt{.rul.md} fájl között legfőbbképp formai eltérések vannak és különböző módon kell őket elkészíteni.
+Végül a TypeScript támogatás megvalósításához szükséges volt az új fordító által használt szabálysértések bevezetése a programba. Ehhez kettő különálló fájlt kellett megvalósítanom. A korábban említett \texttt{.json} kiterjesztésű szabály fájl és a \texttt{.rul.md} fájl között legfőképp formai eltérések vannak és különböző módon kell őket elkészíteni.
 
-Az alapértelmezett szabály fájl (\texttt{.json} fájl) egy JavaScript objektumot tartalmazó fájl, melyben fel van sorolva a fordítóhoz tartozó összes szabály egy, vagy több hozzárendelt értékkel. A szabályokhoz minden esetben tartozik szám, mely meghatározza, hogy elemzés közben adott szabálysértést detektálni akarjuk-e, és milyen súlyosságot kívánunk hozzá rendelni az elemzés eredményében. Ez az szám 0, 1 vagy 2 értéket vehet fel, 0 esetén átlépi, 1 esetén figyelmeztetésként (warningként), 2 esetén pedig hibaként észleli a program. A második érték, mely nem minden szabálynál található meg, bővebb információt tartalmaz arról hogy pontosan milyen fajtáját detektálja a program. \Aref{lst:jsonconfig}-es ábrán ennek a fájlnak egy részlete található.
+Az alapértelmezett szabály fájl (\texttt{.json} fájl) egy JavaScript objektumot tartalmazó fájl, melyben fel van sorolva a fordítóhoz tartozó összes szabály egy, vagy több hozzárendelt értékkel. A szabályokhoz minden esetben tartozik szám, mely meghatározza, hogy elemzés közben adott szabálysértést detektálni akarjuk-e, és milyen súlyosságot kívánunk hozzá rendelni az elemzés eredményében. Ez a szám 0, 1 vagy 2 értéket vehet fel, 0 esetén átlépi, 1 esetén figyelmeztetésként (warningként), 2 esetén pedig hibaként (errorként) észleli a program. A második érték, mely nem minden szabálynál található meg, bővebb információt tartalmaz arról hogy pontosan milyen fajtáját detektálja a program. \Aref{lst:jsonconfig}-es ábrán ennek a fájlnak egy részlete található.
 
-\begin{lstlisting}[caption={Szabálysértések megadása .json állományban},label={lst:jsonconfig}, language={JavaScript}]
+\begin{lstlisting}[caption={Szabálysértések megadása \texttt{.json} állományban},label={lst:jsonconfig}, language={JavaScript}]
 { 
   "for-direction": 0,
   "getter-return": [ 0, { "allowImplicit": true } ],
@@ -134,8 +135,8 @@ Az alapértelmezett szabály fájl (\texttt{.json} fájl) egy JavaScript objektu
 }
 \end{lstlisting}
 
-A másik szabály fájl (.rul.md) ugyan ezeket a szabályokat tartalmazza egy átláthatóbb formátumban. Ebben a fájlban a szabálysértésekhez a súlyosságukon kívül kulcsszavak és leírás is tartozik, melyek alapján a szoftvercsomag felhasználói személyre szabhatják az elemzést.
-Ennek a szabályfájlnak módosításához korábbi eszközkészlet verziókban egy több lépésből álló folyamat volt. Eredetileg \texttt{.rul} típusú állományokat használtak fel a szabálysértéseket vizsgáló programok. Ezeknek a módosítása során először a módosítandó szabályfájlt \texttt{.md} állománnyá kellett konvertálni és a kellő módosításokat Markdown formátumban megírni a fájlban jelen lévő formai követelmények alapján. Ezután a módosított \texttt{.md} fájlt html állománnyá (HyperTextMarkupLanguage), majd vissza \texttt{.rul} állománnyá kellett visszaaállítani külső segédprogramok használatával.
+A másik szabály fájl (\texttt{.rul.md}) ugyan ezeket a szabályokat tartalmazza egy átláthatóbb formátumban. Ebben a fájlban a szabálysértésekhez a súlyosságukon kívül kulcsszavak és leírás is tartozik, melyek alapján a szoftvercsomag felhasználói személyre szabhatják az elemzést.
+Ennek a szabályfájlnak módosításához korábbi eszközkészlet verziókban egy több lépésből álló folyamat volt. Eredetileg \texttt{.rul} típusú állományokat használtak fel a szabálysértéseket vizsgáló programok. Ezeknek a módosítása során először a módosítandó szabályfájlt \texttt{.md} állománnyá kellett konvertálni és a kellő módosításokat Markdown formátumban megírni a fájlban jelen lévő formai követelmények alapján. Ezután a módosított \texttt{.md} fájlt \texttt{.html} állománnyá (HyperText Markup Language), majd vissza \texttt{.rul} állománnyá kellett visszaaállítani külső segédprogramok használatával.
 Ez a folyamat a jelenlegi eszközkészlet verzión belül jelentősen rövidebb lett. Az új szabályokat a \texttt{.rul.md} állományban formai követelményeknek megfelelően, hosszas konvertálások nélkül lehet implementálni. A szabályokat h2-es fejlécekkel tagolva adjuk meg. Ezen fejléceknél adjuk meg a belső azonosítóját az adott szabálynak, majd alatta h4-es fejlécekkel felsorolva adjuk meg a szabály információit. 
 
 \begin{itemize}
@@ -143,13 +144,12 @@ Ez a folyamat a jelenlegi eszközkészlet verzión belül jelentősen rövidebb 
     \item Az \texttt{Enabled} és a \texttt{Warning} mezők határozzák meg hogy észleljük-e az adott szabálysértéseket, hibaként vagy figyelmeztetésként.
     \item A \texttt{HelpText} mező rövid leírást tartalmaz a szabálysértésről. 
     \item A \texttt{Tags} mező alatt címkéket lehet meghatározni, melyek alapján a szabálysértések kategorizálhatóak.
-    \item Az \texttt{OriginalId} mező tartalmazza az elemző által felismert szabály nevét.
-    \item A \texttt{Settings} mező alatt néhány szabálysértésnek, mint ahogy korábban az alapértelmezett fájlban meg kellett adni, további információkat is szükséges megadni.
+    \item A \texttt{Settings} mező alatt néhány szabálysértésnek további információkat is lehet megadni. 
 \end{itemize}
  Mivel nyelvre és eszközre szabottak a \texttt{.rul.md} fájlok, így csak a \texttt{/general/} címkénél szükséges szabályhoz illő értéket megadni, a \texttt{/language/} és a \texttt{/tool/} címkék megegyeznek. Emellett jelenleg minden szabálysértés, melyet a SourceMeter for JavaScript észlel, \texttt{Settings} mező alatt \texttt{Major}, azaz fontos prioritású. Alább \aref{fig:mdszabaly}-es ábrán található egy szabály beállításához példa.
 
 \begin{figure}[!htbp]
-    \caption{Szabálysértés megadása .md.rul fájlban}\label{fig:mdszabaly}
+    \caption{Szabálysértés megadása \texttt{.md.rul} fájlban}\label{fig:mdszabaly}
     \centering
     \includegraphics[width=0.9\textwidth]{mdszabaly.png}
 \end{figure}
@@ -160,8 +160,8 @@ A szabálysértések manuálisan lettek beillesztve, melyek megfelelnek az ESLin
 
 \subsection{JSAN bevezető}
 
-Az Analyzer-JavaScript másik alapozó programja a JSAN, avagy a JavaScript Analyzer. Ez a program, mint korábbi fejezetben említve, a bemenetként kapott projekt kódját átalakítja egy egyedi absztrakt szintaxisfává, melyet az elemzés későbbi lépéseiben használunk fel duplikált kódszegmensek keresésére és metrikák kiszámolására.
-Ennek a programnak a bővítése jelentősen egyszerűbb ESLintRunnerhez hasonlítva. Az eredeti kódban van egy nagy terjedelmű switch, melyben az elemzés során talált ``csomópontok'' (továbbiakban node-ok) típusai vannak felsorolva. Minden felsorolt típushoz tartozik egy külön fájl, mely tartalmazza exportált funkció formájában, hogy a talált node esetén milyen eljárásokat kell elvégezni és milyen adatokat kell beállítani, például egy funkció hívása esetén többek között mi a hozzátartozó név, mik a paraméterei és mi a hozzátartozó kódrészlet. 
+A SourceMeter for JavaScript másik alapvető programja a JavaScript elemző, (továbbiakban JSAN). Ez a program, mint korábbi fejezetben említve, a bemenetként kapott projekt kódját átalakítja egy egyedi absztrakt szintaxisfává, melyet az elemzés későbbi lépéseiben használunk fel duplikált kódszegmensek keresésére és metrikák kiszámolására.
+Ennek a programnak a bővítése jelentősen egyszerűbb ESLintRunnerhez hasonlítva. Az eredeti kódban található egy nagy terjedelmű switch, melyben az elemzés során talált ``csomópontok'' (továbbiakban node) típusai vannak felsorolva. Minden felsorolt típushoz tartozik egy külön fájl, mely tartalmazza exportált funkció formájában, hogy a talált node esetén milyen eljárásokat kell elvégezni és milyen adatokat kell beállítani, például egy funkció hívása esetén többek között mi a hozzátartozó név, mik a paraméterei és mi a hozzátartozó kódrészlet. 
 
 \begin{figure}[!htbp]
     \caption{Részlet a JSAN node elemzőjéből}\label{fig:jsanast}
@@ -170,18 +170,20 @@ Ennek a programnak a bővítése jelentősen egyszerűbb ESLintRunnerhez hasonl�
 \end{figure}
 
 A program bővítéséhez ezt a switch-et szükséges bővíteni a TypeScript nyelvben található node-ok típusaival, és létre kell hozni ezen típusokhoz tartozó fájlokat.
-Ennek a feladatnak a manuális megvalósításával több probléma is fellép. A program karbantarthatósága és olvashatósága jelentősen csökken azzal, hogy több mint 100 új típust vezetünk be az elemzéshez használt switch-be, emellett az említett fájlok manuális megírása vagy módosítása során több hibát is ejthet a fejlesztő, mely miatt a fejlesztési folyamat több időt igényelhet. Manuális fejlesztésre alternatív megoldásként a SourceMeter eszközkészletnek egy segédprogramját, a ``SchemaGenerator''-t olyan funkcióval bővítettem, mely segítségével a szoftvercsomag fordításánál automatikusan legenerálódik a szükséges switch és a hozzá tartozó fájlok. 
+Ennek a feladatnak a manuális megvalósításával több probléma is fellép. A program karbantarthatósága és olvashatósága jelentősen csökken azzal, hogy több mint 100 új típust vezetnék be az elemzéshez használt switch-be, emellett az említett fájlok manuális megírása vagy módosítása során több hibát is ejthet a fejlesztő, mely miatt a fejlesztési folyamat több időt igényelhet. Manuális fejlesztésre alternatív megoldásként a SourceMeter eszközkészletnek egy segédprogramját, a SchemaGenerator-t olyan funkcióval bővítettem, mely segítségével a szoftvercsomag fordításánál automatikusan legenerálódik a szükséges switch és a hozzá tartozó fájlok. 
 
 \subsection{SchemaGenerator bővítése sablonkód generálással}
 
 A korábban említett segédprogrammal, a SchemaGenerator-ral valósítottam meg az automatikus fájl generálást.
-A segédprogram bővítesének célja, hogy sikeresen lehessen generálni több száz node típushoz tartozó fájlt előre meghatározott sablon alapján és a node típusra vizsgáló switchet tartalmazó fájlt, importálásokkal együtt. A fejlesztés folyamatát fokozottan felgyorsította, hogy már korábban használt fájlok generálásához (például szoftvercsomagunk esetén a korábban említett javascriptAddon fájl) már előre meg voltak írva séma bejárására használt funkciók. 
-SchemaGenerátoron belül található a \texttt{traversalDescendantBFT()}, \texttt{traversalAllEdges()} és a \texttt{traversalAllAttributes()} nevű funkciók. Ezeknek a funkcióknak segítségével lehet bejárni az adott sémákban definiált node típusokat, az ezekhez tartozó attribútumokat és éleket.  
+A segédprogram bővítesének célja, hogy sikeresen lehessen generálni több száz node típushoz tartozó fájlt előre meghatározott sablon alapján és a node típusra vizsgáló switchet tartalmazó fájlt, importálásokkal együtt. A fejlesztés folyamatát fokozottan felgyorsította az, hogy már korábban használt fájlok generálásához (például a szoftvercsomag esetén a korábban említett javascriptAddon fájl) már előre meg voltak írva séma bejárására használt funkciók. 
+SchemaGenerator-on belül található a \texttt{traversalDescendantBFT()}, \texttt{traversalAllEdges()} és a \texttt{traversalAllAttributes()} nevű funkciók. Ezeknek a funkcióknak segítségével lehet bejárni az adott sémákban definiált node típusokat, az ezekhez tartozó attribútumokat és éleket.  
 
 
 A switch generálása kettő lépésből áll. Először a generált fájlok importálását, majd a típusokat felsoroló switch-et kell legenerálni. Mivel ehhez csak a node-ok nevei szükségesek, a \texttt{traversalDescendantBFT()} funkció kétszeri hívásával ez a feladat egyszerű megoldással rendelkezik.
 
-\begin{lstlisting}[caption={Absztrakt és speciális node szűrés},label={lst:computedfiltering}, style={CStyle}]
+\pagebreak
+
+\begin{lstlisting}[caption={Fájl genetálásra használt funkció},label={lst:computedfiltering}, style={CStyle}]
 bool generateSwitchCase() {
     debugMessage(0, "Generating AST switch...\n");
     file = fopen("ASTSwitchCase.js", "w");
@@ -191,16 +193,19 @@ bool generateSwitchCase() {
     }
     getFileNamesForImports();
     fprintf(file, "import {default as Literal} from \"./nodes/Literal.js\";\n");
-    fprintf(file, "\nlet convertNodeToFunction = function (node) {\n");
+    fprintf(file, "\nlet convertNodeToFunction = function (node) {\n"); 
     fprintf(file, "    switch (node.type){\n");
     getFileNamesForCases();
     ...
+}
 \end{lstlisting}
 
 A kettő bejárás során közel azonos módon dolgozza fel a program az adatokat, mivel csak formailag más az adott node-hoz tartozó kód kiíratása. Bár a két funkció összevonható lenne tartalmuk alapján, kód olvashatóság és későbbi továbbfejleszthetőség miatt külön vannak kezelve.
 Ezeken kívül adott dolgokat statikusan kiíratunk a generált fájlba, többek között a switch deklarálását, exportálását, és adott node típusokat a switch-en belül. Sémában definiált, egyedi működés miatt literálokat egy node típusként kezelünk ahelyett, hogy literál fajtánként külön node-okat veszünk fel. Emellett az AST ellenére, melyben a literálok különböző node-okat kaptak, elemzés során minden literál node \texttt{LiteralExpression}-ként van észlelve, és ezt manuálisan szükséges lekezelni.
 
 Node típusok között az AST-n belül találhatóak node párosok, melyek \texttt{Computed} és \texttt{NonComputed} végződésűek. Ezek a node típusok olyan kódolási elemeket foglalnak magukba, melyeknek a hivatkozásaik megadhatóak előre, fordítás előtt statikusan (\texttt{NonComputed}), vagy fordítás során, futásidő közben (\texttt{Computed}).
+
+\pagebreak
 
 \begin{lstlisting}[caption={Absztrakt és speciális node szűrés},label={lst:abs-computedfiltering}, style={CStyle}]
 if (node->type.abstract && strcmp(node->name, "LiteralExpression") != 0) {
@@ -213,24 +218,25 @@ if (strstr(node->name, "NonComputedName") != NULL) {
 ...
 \end{lstlisting}
 
-Ezek a node-ok speciális módon vannak megkülönböztetve az AST-ben és a futásidő közben elemzett node-ok között. AST-ben ezek külön-külön bejegyzéseket kapnak azonos tulajdonságokkal, viszont egy ilyen tulajdonságuk név alapján kapnak értéket. A node-ok tartalmaznak egy \texttt{computed} mezőt, mely \texttt{Computed} node-oknál igaz értéket kapnak, \texttt{NonComputed} esetén pedig hamis értéket. Elemzés során viszont ezek a node-ok nincsenek névlegesen megkülönböztetve, de a \texttt{computed} mező alapján különböző típusú node-nak számítanak.
+Ezek a node-ok speciális módon vannak megkülönböztetve az AST-ben és a futásidő közben elemzett node-ok között. AST-ben ezek különbözőbejegyzéseket kapnak azonos tulajdonságokkal, viszont egy ilyen tulajdonságuk név alapján kapnak értéket. A node-ok tartalmaznak egy \texttt{computed} mezőt, mely \texttt{Computed} node-oknál igaz értéket kapnak, \texttt{NonComputed} esetén pedig hamis értéket. Elemzés során viszont ezek a node-ok nincsenek névlegesen megkülönböztetve, de a \texttt{computed} mező alapján különböző típusú node-nak számítanak.
 Emellett vannak absztrakt node-ok is meghatározva az AST-ben, melyek a sémában megjelennek mint node-ok, de elemzés során nem jelennek meg. Ezek a fájlgenerálás folyamán kihagyhatóak, kivéve a LiteralExpression, ami absztrakt létének ellenére szükséges, mint összefoglaló node a literál típusokra.
 
 Ezek lekezelése könnyen elvégezhető azzal, hogy névre és adott tulajdonságokra szűrve kihagyunk adott node-ok generálását. 
-Ebben az esetben kiszűri az absztakt node-okat, melyeknek a neve nem \texttt{LiteralExpression}, majd azokat, melyeknek a neve tartalmazza a \texttt{NonComputedName} szövegrészletet. Azért szűrünk kifejezetten NonComputedName-re, mert a node párosokból legalább az egyikre szükség van hogy helyesen lehessen legenerálni a switchet. Ezekben az esetekben a node nevének végéről a \texttt{ComputedName} szövegrészletet levágódik és úgy illesztődik be a fájlokba.
+Ebben az esetben kiszűri az absztrakt node-okat, melyeknek a neve nem \texttt{LiteralExpression}, majd azokat, melyeknek a neve tartalmazza a \texttt{NonComputedName} szövegrészletet. Azért szűrünk kifejezetten \texttt{NonComputedName}-re, mert a node párosokból legalább az egyikre szükség van hogy helyesen lehessen legenerálni a switchet. Ezekben az esetekben a node nevének végéről a \texttt{ComputedName} szövegrészletet levágja és úgy illesztődik be a fájlokba.
 
 \begin{lstlisting}[caption={Computed és NonComputed node-ok kezelése},label={lst:abs-compnoncomp}, style={CStyle}]
-if (strstr(fileNameWithExtension, "ComputedName")) subStrCopyFunc(fileNameWithExtension, fileNameWithExtension, strlen(fileNameWithExtension) - strlen("ComputedName"));
-	strcat(fileNameWithExtension, ".js");
+if (strstr(fileNameWithExtension, "ComputedName")) 
+    subStrCopyFunc(fileNameWithExtension, fileNameWithExtension, strlen(fileNameWithExtension) - strlen("ComputedName"));
+    strcat(fileNameWithExtension, ".js");
 \end{lstlisting}
 
 
 Az egyes node-okhoz tartozó fájlok legenerálása sokkal több szűréssel és feltétellel jár. Bár legtöbb fájl azonos sablon alapján lesz felépítve, vannak speciális fájlok, mint a Program és a Literal, melyek statikusabb módon épülnek fel. Emellett a \texttt{ComputedName} és \texttt{NonComputedName} node-oknak másképp kell megadni a wrapperjeiket, mivel a két fajta node, bár egyeznek (egy tulajdonság kivételével), mégis külön wrappert kapnak.
 
-Switch generáláshoz hasonlóan itt is le kell szűrni az absztrakt és a NonComputed node-okat, az előző funkciókhoz hasonló módon.
-Adott, minden node esetén megjelenő tulajdonság kiíratása után le kell generálnunk a first visit-be tartozó tulajdonságok settereit, és az él metódusok settereit. Ezt két külön funkcióval valósítottam meg, mindkettőnek paraméterként megadva a jelenlegi fájl generálásához felhasznált node. 
-Ezekkel a funkciókkal bejárjuk az adott node-oknak a first visit attribútumait, és az edge settereit és, mint eddig nevek alapján tettük, tulajdonság nevekre és típusokra szűrve írattatom ki a megfelelő settereket.
-First visit attribútumok esetén, mivel adott node-oknál más típusú attribútumok fordulhatnak elő, vagy szituációtól függően máshogy kell beállítani az attribútumokat, ezeket külön külön kiszűrjük futásidő folyamán.
+Switch generáláshoz hasonlóan itt is le kell szűrni az absztrakt és a \texttt{NonComputed} node-okat, az előző funkciókhoz hasonló módon.
+Adott, minden node esetén megjelenő tulajdonság kiíratása után le kell generálnunk a first visit-be tartozó tulajdonságok szettereit, és az él metódusok szettereit. Ezt két külön funkcióval valósítottam meg, mindkettőnek paraméterként megadva a jelenlegi fájl generálásához felhasznált node. 
+Ezekkel a funkciókkal bejárjuk az adott node-oknak a FirstVisit attribútumait, és az edge szettereit és, mint eddig nevek alapján tettük, tulajdonság nevekre és típusokra szűrve írattatom ki a megfelelő szettereket.
+FirstVisit attribútumok esetén, mivel adott node-oknál más típusú attribútumok fordulhatnak elő, vagy szituációtól függően máshogy kell beállítani az attribútumokat, ezeket külön külön kiszűrjük futásidő folyamán.
 
 \begin{lstlisting}[caption={Attribútum szűrésről példa},label={lst:attributefilter}, style={CStyle},basicstyle=\fontsize{9}{11}\selectfont\ttfamily]
 if (
@@ -248,7 +254,7 @@ else if (strcmp(lowerName,"kind") == 0
   fprintf(f, "if (node.%s != null) %s.set%s(conversions.convertKinds(node.%s));\n", lowerName, currentNode->name, upperName, lowerName);}
 \end{lstlisting}
 
-Él setterek esetén csak két esetre szükséges figyelnünk. Mivel minden él setter esetén más node-okat kapnak a legenerált funkciók, így típusra nem szükséges figyelnünk (mivel ez már schemában le van kezelve), kizárólag a multiplicitást kell ellenőriznünk, azaz egy adott node tulajdonsághoz egy nodeot, vagy egy tömbnek a nodejait rendeljük.
+Él szetterek esetén csak két esetre szükséges figyelnünk. Mivel minden él szetter esetén más node-okat kapnak a legenerált funkciók, így típusra nem szükséges figyelnünk (mivel ez már sémában le van kezelve), kizárólag a multiplicitást kell ellenőriznünk, azaz egy adott node tulajdonsághoz egy node-ot, vagy egy tömbnek a node-jait rendeljük.
 
 \begin{lstlisting}[caption={Él szetterek fájlba írása},label={lst:edgefilter}, style={CStyle}]
 if (edge->mult == 1) {
@@ -260,8 +266,8 @@ if (edge->mult == 1) {
 
 \subsection{Generált fájlok átmásolása}
 
-Miután ezeket a lépéseket minden szükséges nodera elvégeztük, a program áttérhet a fájlok átmásolására megfelelő célmappába.
-A generált fájlok átmásolása a projekt fordítása folyamán történik meg. A fájlokat a korábban említett javascriptAddon mellé generáljuk egy mappában, mely struktúrálisan már elő van készítve másolásra, rendelkezik a megfelelő mappaszerkezettel. Korábbi fordításpl során ha a JSAN-t akartuk lefordítani, a SchemaGenerátor automatikusan meg volt hívva javascriptAddon generálására és megfelelő helyre másolására, így az új fájlokat is ehhez a folyamathoz rendeltem. A programhoz tartozó CMakeList-ben adtam meg utasításként a másolási parancsot. Emellett figyeltem arra, hogy a fájlok generálásához szükséges parancsok azután vannak meghívva, amikor az addon fájl, és ezzel együtt az újonnan létrehozott fájlok generálása végbe ment.
+Miután ezeket a lépéseket minden szükséges node-ra elvégeztük, a program áttérhet a fájlok átmásolására megfelelő célmappába.
+A generált fájlok átmásolása a projekt fordítása folyamán történik meg. A fájlokat a korábban említett javascriptAddon mellé generáljuk egy mappában, mely strukurálisan már elő van készítve másolásra, rendelkezik a megfelelő mappaszerkezettel. Korábbi fordítások során ha a JSAN-t akartuk lefordítani, a SchemaGenerátor automatikusan meg volt hívva javascriptAddon generálására és megfelelő helyre másolására, így az új fájlokat is ehhez a folyamathoz rendeltem. A programhoz tartozó CMakeList-ben adtam meg utasításként a másolási parancsot. Emellett figyeltem arra, hogy a fájlok generálásához szükséges parancsok azután vannak meghívva, amikor a javascriptAddon fájl, és ezzel együtt az újonnan létrehozott fájlok generálása végbe ment.
 Az alább látható ábrán \texttt{-copy\_directory} CMake parancs használatával volt ez megvalósítva.
 
 \begin{lstlisting}[caption={JSAN Cmake utasítások},label={lst:jsancmake}, language={JavaScript}, basicstyle=\fontsize{9}{11}\selectfont\ttfamily]
@@ -277,7 +283,7 @@ add_custom_command (
 )
 \end{lstlisting}
 
-Az AST-hez tartozó fájlok automatikus legenerálásának köszönhetően a JSAN karbantartása egyszerűbb lett. Jelentősebb AST változtatások esetén nem lesz szükséges az összes node manuális átnézése és ellenőrzése, hanem csak adott sablonokon kell néhány sorral bővíteni vagy módosítani, mely drasztikusan felgyorsítja a folyamatot. Automatikus generálás esetén olyan problémákat is elkerülhetünk, melyek emberi figyelmetlenségből erjednek, például hibás változó deklarálások, melyek könnyen előfordulhatnak többszáz fájl módosítása esetén. Emellett fejlesztés során pár kisebb hibát is észrevettem az AST-ben, melyek javításra kerültek. 
+Az AST-hez tartozó fájlok automatikus legenerálásának köszönhetően a JSAN karbantartása egyszerűbb lett. Jelentősebb AST változtatások esetén nem lesz szükséges az összes node manuális átnézése és ellenőrzése, hanem csak adott sablonokon kell néhány sorral bővíteni vagy módosítani, mely drasztikusan felgyorsítja a folyamatot. Automatikus generálás esetén olyan problémákat is elkerülhetünk, melyek emberi figyelmetlenségből erednek, például hibás változó deklarálások, melyek könnyen előfordulhatnak többszáz fájl módosítása esetén. Emellett fejlesztés során pár kisebb hibát is észrevettem az AST-ben, melyek javításra kerültek. 
 
 \section{JSCG bővítése}
 
@@ -287,9 +293,9 @@ JavaScript esetében szükséges volt a hívásgráfok legenerálása a nyelv di
 
 \subsection{Bővítés, hibajavítás lépései}
 
-A program már rendelkezett kezdetleges TypeScript támogatással, viszont jelentős mennyiségű node lekezelésére nem volt meghatározva működés. Ezen kívül specifikus TypeScript nyelvtani tényezők észlelése esetén hibába futott a program, mivel eddigi implementáció alapján érvénytelen adatot olvasott be. Ezek a változtatások, JSAN-hoz hasonló módon az új typescript-eslint elemző által használt AST specifikáció alapján lett megvalósítva.
+A program már rendelkezett kezdetleges TypeScript támogatással, viszont jelentős mennyiségű node lekezelésére nem volt meghatározva működés. Ezen kívül specifikus TypeScript nyelvtani tényezők észlelése esetén hibába futott a program, mivel eddigi implementáció alapján érvénytelen adatot olvasott be. Ezek a változtatások, JSAN-hoz hasonló módon az új \texttt{typescript-eslint} elemző által használt AST specifikáció alapján lett megvalósítva.
 
-Az előző programok bővítése és folyamatos tesztelések során a JSAN futtatása közben a JSCG által kimutatott hibák alapján voltak meghatározva hogy mely node típusoknál volt szükség változtatásra vagy új működés definiálására. Három fő változtatást kellett megvalósítani:
+Az előző programok bővítése és folyamatos tesztelések során a JSAN futtatása közben a JSCG által kimutatott hibák alapján voltak meghatározva hogy mely node típusoknál volt szükség változtatásra vagy új működés definiálására. Három fő változtatást kellett megvalósítanom:
 
 \begin{itemize}
     \item \texttt{PrivateIdentifier} észlelés \texttt{Identifier} helyén, melyek osztályokban metódus és változó definiálásoknál találhatóak
@@ -319,7 +325,7 @@ function isIdentifier(ndType) {
 \end{lstlisting}
 
 \texttt{Computed} mezők teljes körű támogatásának bevezetése működésükből adódóan nem teljesen volt implementálható.
-Ezek a mezők TypeScriptben osztályokban, interfészekben és objektumokban találhatóak, és olyan célt szolgálnak, mellyel futásidő során az említett objektumokhoz dinamikusan nevekkel adhatunk meg metódusokat. Kapcsos zárójeleken belül primitív típusok (szöveg, szám) megadása és ezek között elvégezhető műveletek mellett változókat is megadhatunk, melyeknek értékei lesznek felhasználva a metódus nevének meghatározására.
+Ezek a mezők TypeScriptben osztályokban, interfészekben és objektumokban találhatóak, és olyan célt szolgálnak, mellyel futásidő során az említett objektumokhoz dinamikusan nevekkel adhatunk meg metódusokat. Kapcsos zárójeleken belül primitív típusok (szöveg, szám) megadása és ezek között elvégezhető műveletek mellett változók megadhatóak, melyeknek értékei lesznek felhasználva a metódus nevének meghatározására.
 
 \begin{lstlisting}[caption={Computed mező példa},label={lst:jsonconfig}, language={JavaScript}]
 module.exports = {
@@ -330,9 +336,9 @@ module.exports = {
 \end{lstlisting}
 
 Ebből adódóan pontos bekötéseket a hívásgráfba nem lehet létrehozni, mivel a projekt futtatása nélkül pontos név megadása ezeknek a mezőknek nem lehetséges.
-\texttt{FunctionExpression} típusú nodeok esetén, melyek \texttt{Property} típusú nodeból származnak (azaz a korábban említett objektumok valamelyikének egyik metódusaként van deklarálva), adott esetekre definiáltam ideiglenes működést.
+\texttt{FunctionExpression} típusú node-ok esetén, melyek \texttt{Property} típusú node-ból származnak (azaz a korábban említett objektumok valamelyikének egyik metódusaként van deklarálva), adott esetekre definiáltam ideiglenes működést.
 
-Három gyakori esetre szűrtem le működést. Amikor primitív adattípusokkal, vagy azok között valamilyen művelettel volt megadva érték, akkor az említett node-oknak az értékeit állítottam be mint azonosító. Emellett olyan esetben, amikor változó volt értékként megadva, a változó nevét adtam meg azonosítóként.
+Három gyakori esetre szűrtem le a működést. Amikor primitív adattípusokkal, vagy azok között valamilyen művelettel volt megadva érték, akkor az említett node-oknak az értékeit állítottam be mint azonosító. Emellett olyan esetben, amikor változó volt értékként megadva, a változó nevét adtam meg azonosítóként.
 
 \begin{lstlisting}[caption={Azonosító beállítás példa},label={lst:jsonconfig}, language={JavaScript}]
 if (parent.key) {
@@ -347,4 +353,4 @@ if (parent.key) {
 ...
 \end{lstlisting}
 
-Változtatások után a a kódon belül érintett dokumentációkat felfrissítettem megfelelő külső hivatkozásokkal és AST referenciákkal. Emellett új teszteseteket is létrehoztam helyes működés ellenőrzésére.
+Változtatások után  a kódon belül érintett dokumentációkat felfrissítettem megfelelő külső hivatkozásokkal és AST referenciákkal. Emellett új teszteseteket is létrehoztam helyes működés ellenőrzésére.
