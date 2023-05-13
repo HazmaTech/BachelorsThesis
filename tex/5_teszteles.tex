@@ -1,7 +1,7 @@
 \chapter{Tesztelés}
 \label{chap:fejezet5}
 
-\section{Változtatások tesztelésének folyamata, új tesztek felvétele}
+\section{Változtatások tesztelésének folyamata}
 
 A SourceMeter eszközkészlet szoftverjeinek a működését regressziós teszteléssel (röviden regtest) ellenőrizzük. Ez egy olyan tesztelési módszer, amely a változásokat követően újból elvégzi az alkalmazás korábbi tesztjeit annak érdekében, hogy megbizonyosodjon arról, hogy a változtatások nem okoztak olyan hibákat, amelyek hatással lehetnek az alkalmazás teljesítményére.
 A célja az, hogy könnyen ellenőrizhető legyen a korábban működő szoftverek új funkciók implementálása után is, és hogy az új funkciók, amelyeket hozzáadtak az alkalmazáshoz, nem okoznak olyan hibákat, amelyek negatívan befolyásolják az alkalmazás teljesítményét. Ezenkívül az alkalmazás megbízhatóságának növeléséhez és a hibák korai észleléséhez.
@@ -54,6 +54,7 @@ A teszteket, amiket megadhatunk paraméterként, hozzáadtam a megfelelő argume
 
 A módosítások után még fennállt egy probléma. Minden teszt futtatása esetén (\texttt{Regtest\_all} futtatása) minden teszt kétszer futott le. A teszteknek a tömbjei egy \texttt{all\_tests} nevű szótárban (dictionary) vannak megadva. Tesztek futtatása során ellenőrizzük hogy adott nyelvhez tartozik-e az éppen iterált teszt, ha nem, akkor kihagyjuk annak futtatását. Mivel a tesztek külön-külön meg voltak adva a programokra és nyelvekre, így alapesetben minden teszt kétszer futott volna le. Ennek megoldására legegyszerűbb módszer a duplikált tesztek törlése volt abban az esetben, ha a \texttt{Regtest\_all} futtatása volt a feladat, azaz minden, nyelvhez tartozó összetett tesztet töröltünk az \texttt{all\_tests}-ből. 
 
+\pagebreak
 
 \begin{lstlisting}[caption={Teszt törlési lépések},label={lst:abs-computedfiltering}, language={Python}]
 if LANG == "all":
